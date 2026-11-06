@@ -10,9 +10,9 @@ namespace Wlk {
             }
 
             foreach (KeyValuePair<int, ProjectStorage.Project> p in ProjectStorage.Projects) {
-                Console.Write($"[{p.Key}] {p.Value.Title} ");
+                Console.Write($"[{p.Key}] {p.Value.Title}");
                 if (p.Value.Descr != null && p.Value.Descr.Length != 0)
-                    Console.WriteLine($"{Utils.Color("grey")}{p.Value.Descr}{Utils.Color("reset")}");
+                    Console.WriteLine($"{Utils.Color("grey")} - {p.Value.Descr}{Utils.Color("reset")}");
                 else
                     Console.WriteLine();
             }

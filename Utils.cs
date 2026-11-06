@@ -10,7 +10,7 @@ namespace Wlk {
         private readonly static Dictionary<string, string> Colors = new(){
             {"reset", "\x1b[0m"},
             {"bold", "\x1b[2m"},
-            {"grey", "\x1B[38;2;85;85;85m"},
+            {"grey", "\x1B[38;2;95;95;99m"},
         };
 
         public static string Color(string key) {
