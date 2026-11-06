@@ -26,27 +26,39 @@ namespace Wlk {
             public DateTimeOffset Created { get; init; } = created;
         }
 
-        static public void SaveToFile() {
-            // TODO: save to appropriate place depending on operating system
-            string fileName = "wlk.storage";
+        static public bool SaveToFile() {
+            string? path = Utils.GetStoragePath();
+            if (path == null) {
+                Console.Error.WriteLine("Error: could not save to file, failed to fetch storage path");
+                return false;
+            }
             string jsonString = JsonSerializer.Serialize(Projects, Utils.JsonOptions);
-            File.WriteAllText(fileName, jsonString);
-            return;
+            File.WriteAllText(path, jsonString);
+            return true;
         }
 
         static public bool LoadFromFile() {
-            string? path = Utils.LocateStoragePath("wlk.storage");
-
+            string? path = Utils.GetStoragePath();
             if (path == null) {
-                Console.WriteLine("Error: failed to locate a 'wlk.storage' file -- run the 'init' command to initialize a new file!");
+                Console.Error.WriteLine("Error: failed to fetch storage path");
                 return false;
             }
+            else {
+                if (!File.Exists(path)) {
+                    if (!Utils.InitStorage())
+                        return false;
+                }
 
-            string jsonString = File.ReadAllText(path);
-            Dictionary<int, Project>? DeserProjects =
-               JsonSerializer.Deserialize<Dictionary<int, Project>>(jsonString, Utils.JsonOptions);
-            Projects = DeserProjects ?? throw new InvalidOperationException("'wlk.storage' failed to serialize. Run the 'init' command to do a hard reset.");
-            return true;
+                string jsonString
+                    = File.ReadAllText(path);
+                if (jsonString.Length > 1) {
+                    Dictionary<int, Project>? DeserProjects =
+                        JsonSerializer.Deserialize<Dictionary<int, Project>>(jsonString, Utils.JsonOptions);
+                    Projects = DeserProjects ?? throw new InvalidOperationException("Failed to serialize storage file. Run the 'init' command to do a hard reset.");
+                }
+                return true;
+
+            }
         }
 
         /// <summary> DEBUG </summary>

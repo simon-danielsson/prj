@@ -1,5 +1,4 @@
-﻿
-/*
+﻿/*
    Several projects and each project contains a list of tasks as well as free logs.
 
     Project[] (title, body) [key: id]
@@ -15,19 +14,28 @@ namespace Wlk {
     /// Entrypoint and argument handling.
     /// </summary>
     static class Program {
+
+        // static void Main() {
+        //     // editor integration
+        //     Console.WriteLine("Hello world!");
+        //     if (Utils.EditInEditor("This is some default file content") is string c)
+        //         Console.WriteLine(c);
+        //     else
+        //         return;
+        // }
+
         static void Main(string[] args) {
 
             if (!ProjectStorage.LoadFromFile())
                 return;
-            // ProjectStore.DebugPopulateProjects();
-            // ProjectStore.SaveToFile();
+
+            // ProjectStorage.DebugPopulateProjects();
             // ProjectStore.DebugProjectsPrint();
 
             if (args.Length != 0) {
                 foreach (string arg in args) {
                     if (Commands.CmdTable.TryGetValue(arg, out var row)) {
                         row.Function(string.Empty);
-                        return;
                     }
                     else {
                         Console.WriteLine($"Illegal command: '{arg}' -- try 'help'");
@@ -38,7 +46,9 @@ namespace Wlk {
             else {
                 Console.WriteLine("Error: no command provided -- try 'help'");
             }
+
+            if (!ProjectStorage.SaveToFile())
+                return;
         }
     }
 }
-
