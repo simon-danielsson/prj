@@ -24,7 +24,6 @@ namespace Prj {
 
         public static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true, IncludeFields = true };
 
-        // TODO: implement file search across various config/cache directories
         public static string? GetStoragePath() {
             string? homeDir = Environment.GetEnvironmentVariable("HOME");
             if (homeDir is null) {

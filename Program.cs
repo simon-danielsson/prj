@@ -5,8 +5,6 @@
         Logs[] (title, body, date created)
         Tasks[] (text, date created, date finished, finished boolean)
 
-    TODO: Editor (vim/neovim) integration
-
   */
 
 namespace Prj {
