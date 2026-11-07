@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Globalization;
 
 namespace Prj {
     /// <summary>
@@ -23,6 +24,10 @@ namespace Prj {
         }
 
         public static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true, IncludeFields = true };
+
+        /// <summary> Takes a DateTimeOffset and formats it nicely for printing
+        /// to console. </summary>
+        public static string TimeDisplay(this DateTimeOffset t) => t.ToString("D", CultureInfo.CreateSpecificCulture("en-US"));
 
         public static string? GetStoragePath() {
             string? homeDir = Environment.GetEnvironmentVariable("HOME");
@@ -100,7 +105,7 @@ namespace Prj {
         }
 
         public static void MsgErr(string msg) {
-            Console.Error.WriteLine($"Error: {msg} -- try 'help'");
+            Console.Error.WriteLine($"Error: {msg}");
         }
 
         public static void MsgInfo(string msg) {
