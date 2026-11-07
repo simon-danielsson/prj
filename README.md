@@ -1,4 +1,4 @@
-<h2 align="center">prj</h2>
+<h1 align="center">prj</h1>
   
 <p align="center">
   <em>Opinionated todo-list application for the unix CLI.</em>
