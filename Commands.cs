@@ -3,7 +3,7 @@ namespace Wlk {
     /// Handling and execution of program commands (hit after Program.cs)
     /// </summary>
     static class Commands {
-        private static void CmdList(string _) {
+        private static void CmdList(int _) {
             if (ProjectStorage.Projects.Count == 0) {
                 Console.WriteLine("No projects were found!");
                 return;
@@ -18,7 +18,11 @@ namespace Wlk {
             }
         }
 
-        private static void CmdHelp(string _) {
+        private static void CmdStat(int id) {
+            Console.WriteLine($"requested id: {id}");
+        }
+
+        private static void CmdHelp(int _) {
             string helpTxt = Utils.GetEmbeddedContent("help.txt");
             Console.Write($"{helpTxt}");
 
@@ -32,7 +36,7 @@ namespace Wlk {
             }
         }
 
-        public record CmdTableRow(string Descr, string? Arg, Action<string> Function);
+        public record CmdTableRow(string Descr, string? Arg, bool HasArg, Action<int> Function);
 
         /// <summary>
         /// Dict. containing program commands with respective names,
@@ -40,13 +44,13 @@ namespace Wlk {
         /// </summary>
         static public Dictionary<string, CmdTableRow> CmdTable = new(){
                 {
-                    "help", new("Display help.", null, CmdHelp)
+                    "help", new("Display help.", null, false, CmdHelp)
                 },
                 {
-                    "ls", new("List all projects.", null, CmdList)
+                    "ls", new("List all projects.", null, false, CmdList)
                 },
                 {
-                    "stat", new("Display project overview.", "<id>", CmdList)
+                    "stat", new("Display project overview.", "<id>", true, CmdStat)
                 },
             };
 

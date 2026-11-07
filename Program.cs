@@ -24,27 +24,60 @@ namespace Wlk {
         //         return;
         // }
 
-        static void Main(string[] args) {
+        class Args {
+            readonly static string[] args = Environment.GetCommandLineArgs();
+            readonly int argsLen = args.Length;
+            private int cursor = 1;
 
-            if (!ProjectStorage.LoadFromFile())
-                return;
+            public bool ArgLeft() {
+                return cursor + 1 <= argsLen;
+            }
+
+            public string? Current() {
+                return args[cursor];
+            }
+
+            public string? Next() {
+                return ArgLeft() ? args[cursor += 1] : null;
+            }
+
+            public string? PeekNext() {
+                return ArgLeft() ? args[cursor + 1] : null;
+            }
+        }
+
+        static void Main() {
 
             // ProjectStorage.DebugPopulateProjects();
             // ProjectStore.DebugProjectsPrint();
 
-            if (args.Length != 0) {
-                foreach (string arg in args) {
+            if (!ProjectStorage.LoadFromFile())
+                return;
+
+            var a = new Args();
+
+            while (a.ArgLeft()) {
+                if (a.Current() is string arg) {
                     if (Commands.CmdTable.TryGetValue(arg, out var row)) {
-                        row.Function(string.Empty);
+                        if (!row.HasArg) {
+                            row.Function(-1);
+                            break;
+                        }
+                        if (a.ArgLeft() && a.PeekNext() != null) {
+                            row.Function(Convert.ToInt32(a.Next()));
+                            break;
+                        }
+                        else {
+                            Console.WriteLine($"No argument provided for command '{arg}' -- try 'help'");
+                            return;
+                        }
                     }
                     else {
                         Console.WriteLine($"Illegal command: '{arg}' -- try 'help'");
                         break;
                     }
                 }
-            }
-            else {
-                Console.WriteLine("Error: no command provided -- try 'help'");
+                a.Next();
             }
 
             if (!ProjectStorage.SaveToFile())
