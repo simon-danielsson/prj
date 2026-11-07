@@ -9,6 +9,10 @@ namespace Prj {
                 return;
             }
 
+            // TODO: include datecreated for each project as well
+
+            // TODO: add date formatting to CmdList
+
             Console.WriteLine(Utils.Color("underline") +
                     string.Format("{0,-6}{1, -18}{2,-30}{3,-48}", "ID", "Completion", "Title", "Description") + Utils.Color("reset"));
 
@@ -28,7 +32,8 @@ namespace Prj {
                     Console.WriteLine(row.Descr);
 
                 Console.WriteLine();
-                // Console.WriteLine(Utils.Color("bold") + string.Format("{0,-40}", "\nTASKS"), Utils.Color("reset"));
+
+                // TODO: add date formatting to CmdStat
 
                 if (row.Tasks.Length > 0) {
                     Console.WriteLine(Utils.Color("underline") +

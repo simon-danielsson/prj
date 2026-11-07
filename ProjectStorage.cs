@@ -13,6 +13,17 @@ namespace Prj {
             public Task[] Tasks = tasks;
             public Log[] Logs = logs;
 
+            public DateTimeOffset? DateCreated() {
+                var oldestTask = Tasks.MinBy(i => i.Date)?.Date;
+                var oldestLog = Logs.MinBy(i => i.Created)?.Created;
+                return (oldestTask, oldestLog) switch {
+                    (null, null) => null,
+                    (null, { } log) => log,
+                    ( { } task, null) => task,
+                    ( { } task, { } log) => task > log ? log : task
+                };
+            }
+
             public int LogsTotal() => Logs.Length;
             public int TasksTotal() => Tasks.Length;
             public int TasksDone() => Tasks.Count(s => s.Done);
