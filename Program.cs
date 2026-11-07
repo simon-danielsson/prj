@@ -26,11 +26,11 @@ namespace Wlk {
 
         static void Main() {
 
-            // ProjectStorage.DebugPopulateProjects();
             // ProjectStore.DebugProjectsPrint();
 
             if (!ProjectStorage.LoadFromFile())
                 return;
+            // ProjectStorage.DebugPopulateProjects();
 
             var a = new Args();
 

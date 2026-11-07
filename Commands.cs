@@ -9,17 +9,70 @@ namespace Wlk {
                 return;
             }
 
-            Console.WriteLine(Utils.Color("bold") +
-                    string.Format("{0,-6}{1,-30}{2,0}", "ID", "Title", "Description") + Utils.Color("reset"));
+            Console.WriteLine(Utils.Color("underline") +
+                    string.Format("{0,-6}{1, -18}{2,-30}{3,-48}", "ID", "Completion", "Title", "Description") + Utils.Color("reset"));
 
             foreach (KeyValuePair<int, ProjectStorage.Project> p in ProjectStorage.Projects) {
+
                 Console.WriteLine(
-                    string.Format("{0,-6}{1,-30}{2,0}", p.Key, p.Value.Title, p.Value.Descr));
+                    string.Format("{0,-6}{1,-18}{2,-30}{3,0}", p.Key, $"{p.Value.TasksDone()}/{p.Value.TasksTotal()} ({p.Value.CompletionPercent():F1}%)", p.Value.Title, p.Value.DescrConcat(45)));
             }
         }
 
         private static void CmdStat(int id) {
-            Console.WriteLine($"requested id: {id}");
+            if (id >= 0 && ProjectStorage.Projects.TryGetValue(id, out var row)) {
+
+                Console.WriteLine(Utils.Color("bold") +
+                        $"{id} - {row.Title}" + Utils.Color("reset"));
+                if (row.Descr != null && row.Descr.Length > 0)
+                    Console.WriteLine(row.Descr);
+
+                Console.WriteLine();
+                // Console.WriteLine(Utils.Color("bold") + string.Format("{0,-40}", "\nTASKS"), Utils.Color("reset"));
+
+                if (row.Tasks.Length > 0) {
+                    Console.WriteLine(Utils.Color("underline") +
+                            string.Format("{0,-6}{1,-8}{2,-30}{3,-40}", "ID", "Done", "Created", "Text") + Utils.Color("reset"));
+                    foreach (ProjectStorage.Task task in row.Tasks) {
+                        Console.Write(
+                            string.Format("{0,-6}", task.Id));
+
+                        if (task.Done)
+                            Console.Write(
+                                string.Format("{0,-8}", "X"));
+                        else
+                            Console.Write(
+                                string.Format("{0,-8}", "."));
+
+                        Console.WriteLine(
+                            string.Format("{0,-30}{1,0}", task.Date, task.Text));
+                    }
+                }
+                else {
+                    Console.WriteLine("No tasks were found!");
+                }
+
+                Console.WriteLine();
+                // Console.WriteLine(Utils.Color("bold") + "\nLOGS\n", Utils.Color("reset"));
+
+                if (row.Logs.Length > 0) {
+                    Console.WriteLine(Utils.Color("underline") +
+                            string.Format("{0,-14}{1,-30}{2,-40}", "ID", "Created", "Text") + Utils.Color("reset"));
+                    foreach (ProjectStorage.Log log in row.Logs) {
+                        Console.WriteLine(
+                            string.Format("{0,-14}{1,-30}{2,0}", log.Id, log.Created, log.Text));
+
+                    }
+                }
+                else {
+                    Console.WriteLine("No logs were found!");
+                }
+
+            }
+            else {
+                Utils.MsgErr($"project id '{id}' does not exist");
+            }
+
             // TODO: check that id is positive and that it exists as a project
         }
 
@@ -65,7 +118,6 @@ USAGE:
     wlk <command> [args]
 
 COMMANDS:
-    init    <name>                     Create a new project
     ls                                 List all projects
     stat    <id>                       Show project overview: description,
                                        lists with completion, overall %, last log

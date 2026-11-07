@@ -12,18 +12,47 @@ namespace Wlk {
             public string? Descr = descr;
             public Task[] Tasks = tasks;
             public Log[] Logs = logs;
+
+            public int LogsTotal() => Logs.Length;
+            public int TasksTotal() => Tasks.Length;
+            public int TasksDone() => Tasks.Count(s => s.Done);
+            public double CompletionPercent() {
+                if (TasksTotal() == 0)
+                    return 0;
+                return TasksDone() / (float)TasksTotal() * 100;
+            }
+
+            public string DescrConcat(int threshold) {
+                if (Descr != null) {
+                    return Descr.Length <= threshold
+                        ? Descr
+                        : Descr[..threshold] + "...";
+                }
+                return "";
+            }
         }
 
-        public class Task(string text, DateTimeOffset date, bool done) {
+        public class Task(string text, DateTimeOffset date, bool done, int id) {
             public string Text { get; init; } = text;
             public DateTimeOffset Date { get; init; } = date;
             public bool Done { get; init; } = done;
+            public int Id { get; init; } = id;
+
+            public string TextConcat(int threshold) {
+                if (Text != null) {
+                    return Text.Length <= threshold
+                        ? Text
+                        : Text[..threshold] + "...";
+                }
+                return "";
+            }
         }
 
-        public class Log(string title, string text, DateTimeOffset created) {
+        public class Log(string title, string text, DateTimeOffset created, int id) {
             public string Title { get; init; } = title;
             public string Text { get; init; } = text;
             public DateTimeOffset Created { get; init; } = created;
+            public int Id { get; init; } = id;
         }
 
         static public bool SaveToFile() {
@@ -81,18 +110,18 @@ namespace Wlk {
                 "Website Redesign",
                 "Overhaul the marketing site. Target: end of quarter.",
                 [
-                    new("Draft new wireframes",       new(2026, 10, 05, 9, 0, 0, TimeSpan.FromHours(1)), true),
-                    new("Pick color palette",         new(2026, 10, 08, 14, 30, 0, TimeSpan.FromHours(1)), true),
-                    new("Implement landing page",     new(2026, 10, 20, 11, 15, 0, TimeSpan.FromHours(1)), false),
-                    new("Write copy for About page",  new(2026, 11, 01, 8, 45, 0, TimeSpan.FromHours(1)), false),
+                    new("Draft new wireframes",       new(2026, 10, 05, 9, 0, 0, TimeSpan.FromHours(1)), true, 0),
+                    new("Pick color palette",         new(2026, 10, 08, 14, 30, 0, TimeSpan.FromHours(1)), true, 1),
+                    new("Implement landing page",     new(2026, 10, 20, 11, 15, 0, TimeSpan.FromHours(1)), false, 2),
+                    new("Write copy for About page",  new(2026, 11, 01, 8, 45, 0, TimeSpan.FromHours(1)), false, 3),
                 ],
                 [
                     new("Kickoff meeting",    "Agreed on scope: 5 pages, no CMS for now.",
-                    new(2026, 10, 05, 10, 0, 0, TimeSpan.FromHours(1))),
+                    new(2026, 10, 05, 10, 0, 0, TimeSpan.FromHours(1)), 0),
                     new("Wireframes approved","Client signed off on version 3.",
-                    new(2026, 10, 12, 16, 20, 0, TimeSpan.FromHours(1))),
+                    new(2026, 10, 12, 16, 20, 0, TimeSpan.FromHours(1)), 1),
                     new("Palette debate",     "Went with teal accents instead of orange. Jury is out.",
-                    new(2026, 10, 18, 13, 5, 0, TimeSpan.FromHours(1))),
+                    new(2026, 10, 18, 13, 5, 0, TimeSpan.FromHours(1)), 2),
                 ]);
 
             Projects[2] = new Project(
@@ -100,17 +129,17 @@ namespace Wlk {
                 "Ultrasonic distance sensor reporting parking position over MQTT.",
                 [
                     new("Calibrate sensor at 2m range",
-                    new(2026, 09, 14, 19, 0, 0, TimeSpan.FromHours(2)), true),
+                    new(2026, 09, 14, 19, 0, 0, TimeSpan.FromHours(2)), true, 0),
                     new("Add deep-sleep mode",
-                    new(2026, 09, 21, 21, 10, 0, TimeSpan.FromHours(2)), false),
+                    new(2026, 09, 21, 21, 10, 0, TimeSpan.FromHours(2)), false, 1),
                     new("Test with car parked",
-                    new(2026, 10, 02, 17, 40, 0, TimeSpan.FromHours(2)), false),
+                    new(2026, 10, 02, 17, 40, 0, TimeSpan.FromHours(2)), false, 2),
                 ],
                 [
                     new("First flash success", "Blink LED on boot. It lives!",
-                    new(2026, 09, 14, 19, 55, 0, TimeSpan.FromHours(2))),
+                    new(2026, 09, 14, 19, 55, 0, TimeSpan.FromHours(2)), 0),
                     new("Range readings noisy", "±15cm jitter; adding a median filter next.",
-                    new(2026, 09, 16, 20, 30, 0, TimeSpan.FromHours(2))),
+                    new(2026, 09, 16, 20, 30, 0, TimeSpan.FromHours(2)), 1),
                 ]);
 
             Projects[3] = new Project(
@@ -118,13 +147,13 @@ namespace Wlk {
                 null, // exercises the nullable Descr
                 [
                     new("Weekly shop: October wk 43",
-                    new(2026, 10, 19, 7, 30, 0, TimeSpan.FromHours(1)), true),
+                    new(2026, 10, 19, 7, 30, 0, TimeSpan.FromHours(1)), true, 0),
                     new("Try lentil bolognese recipe",
-                    new(2026, 10, 26, 7, 30, 0, TimeSpan.FromHours(1)), false),
+                    new(2026, 10, 26, 7, 30, 0, TimeSpan.FromHours(1)), false, 1),
                 ],
                 [
                     new("Recipes moved to notebook", "Keeping logs here minimal.",
-                    new(2026, 10, 19, 8, 0, 0, TimeSpan.FromHours(1))),
+                    new(2026, 10, 19, 8, 0, 0, TimeSpan.FromHours(1)), 0),
                 ]);
 
             Projects[4] = new Project(
@@ -138,9 +167,9 @@ namespace Wlk {
                 "Working through IntroToRx, one chapter per evening.",
                 [
                     new("Chapter 1: Creating sequences",
-                    new(2026, 11, 02, 20, 0, 0, TimeSpan.FromHours(1)), true),
+                    new(2026, 11, 02, 20, 0, 0, TimeSpan.FromHours(1)), true, 0),
                     new("Chapter 2: Reducing a sequence",
-                    new(2026, 11, 03, 20, 0, 0, TimeSpan.FromHours(1)), false),
+                    new(2026, 11, 03, 20, 0, 0, TimeSpan.FromHours(1)), false, 1),
                 ],
                 []);
         }
