@@ -9,12 +9,12 @@ namespace Wlk {
                 return;
             }
 
+            Console.WriteLine(Utils.Color("bold") +
+                    string.Format("{0,-6}{1,-30}{2,0}", "ID", "Title", "Description") + Utils.Color("reset"));
+
             foreach (KeyValuePair<int, ProjectStorage.Project> p in ProjectStorage.Projects) {
-                Console.Write($"[{p.Key}] {p.Value.Title}");
-                if (p.Value.Descr != null && p.Value.Descr.Length != 0)
-                    Console.WriteLine($"{Utils.Color("grey")} - {p.Value.Descr}{Utils.Color("reset")}");
-                else
-                    Console.WriteLine();
+                Console.WriteLine(
+                    string.Format("{0,-6}{1,-30}{2,0}", p.Key, p.Value.Title, p.Value.Descr));
             }
         }
 
@@ -23,12 +23,16 @@ namespace Wlk {
             Console.Write($"{helpTxt}");
 
             foreach (KeyValuePair<string, CmdTableRow> row in CmdTable) {
+                Console.Write(
+                    string.Format("{0,-8}", row.Key));
+                Console.Write(
+                    string.Format("{0,-8}", row.Value.Arg));
                 Console.WriteLine(
-                    string.Format("{0,-16}{1,0}", row.Key, row.Value.Descr));
+                    string.Format("{1,0}", row.Key, row.Value.Descr));
             }
         }
 
-        public record CmdTableRow(string Descr, Action<string> Function);
+        public record CmdTableRow(string Descr, string? Arg, Action<string> Function);
 
         /// <summary>
         /// Dict. containing program commands with respective names,
@@ -36,10 +40,13 @@ namespace Wlk {
         /// </summary>
         static public Dictionary<string, CmdTableRow> CmdTable = new(){
                 {
-                    "help", new("Display help.", CmdHelp)
+                    "help", new("Display help.", null, CmdHelp)
                 },
                 {
-                    "ls", new("List all projects.", CmdList)
+                    "ls", new("List all projects.", null, CmdList)
+                },
+                {
+                    "stat", new("Display project overview.", "<id>", CmdList)
                 },
             };
 
