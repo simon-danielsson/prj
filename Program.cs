@@ -9,7 +9,7 @@
 
   */
 
-namespace Wlk {
+namespace Prj {
     /// <summary>
     /// Entrypoint and argument handling.
     /// </summary>

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace Wlk {
+namespace Prj {
     /// <summary>
     /// Owns the data/types/functions for projects and their children.
     /// </summary>

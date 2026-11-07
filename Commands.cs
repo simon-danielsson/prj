@@ -1,4 +1,4 @@
-namespace Wlk {
+namespace Prj {
     /// <summary>
     /// Handling and execution of program commands (hit after Program.cs)
     /// </summary>
@@ -112,10 +112,9 @@ namespace Wlk {
 }
 
 /*
-wlk 0.1.0 — personal project walker
 
 USAGE:
-    wlk <command> [args]
+    prj <command> [args]
 
 COMMANDS:
     ls                                 List all projects

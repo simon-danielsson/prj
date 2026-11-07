@@ -1,6 +1,6 @@
-wlk - opinionated todo-list
+prj - opinionated todo-list
 Built by Simon Danielsson
-https://github.com/simon-danielsson/wlk
+https://github.com/simon-danielsson/prj
 
 Usage:
 

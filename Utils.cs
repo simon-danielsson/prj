@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Text.Json;
 
-namespace Wlk {
+namespace Prj {
     /// <summary>
     /// Various helpers and global settings.
     /// </summary>
@@ -31,7 +31,7 @@ namespace Wlk {
                 MsgErr("environment variable '$HOME' not set");
                 return null;
             }
-            return homeDir + "/.wlk.storage";
+            return homeDir + "/.prj.storage";
         }
 
         public static bool InitStorage() {
@@ -57,7 +57,7 @@ namespace Wlk {
         public static string GetEmbeddedContent(string name) {
             Assembly.GetExecutingAssembly().GetManifestResourceNames();
             var asm = Assembly.GetExecutingAssembly();
-            using var stream = asm.GetManifestResourceStream("wlk.embedded." + name)
+            using var stream = asm.GetManifestResourceStream("prj.embedded." + name)
             ?? throw new InvalidOperationException(
                 $"\nResource '{name}' not found. \nAvailable: " +
                 string.Join(", ", asm.GetManifestResourceNames()) + "\n---");
