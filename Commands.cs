@@ -9,17 +9,15 @@ namespace Prj {
                 return;
             }
 
-            // TODO: include datecreated for each project as well
-
-            // TODO: add date formatting to CmdList
+            // TODO: sort with most recent projects at the bottom
 
             Console.WriteLine(Utils.Color("underline") +
-                    string.Format("{0,-6}{1, -18}{2,-30}{3,-48}", "ID", "Completion", "Title", "Description") + Utils.Color("reset"));
+                    string.Format("{0,-6}{1, -30}{2, -18}{3,-30}{4,-33}", "ID", "Created", "Completion", "Title", "Description") + Utils.Color("reset"));
 
             foreach (KeyValuePair<int, ProjectStorage.Project> p in ProjectStorage.Projects) {
 
                 Console.WriteLine(
-                    string.Format("{0,-6}{1,-18}{2,-30}{3,0}", p.Key, $"{p.Value.TasksDone()}/{p.Value.TasksTotal()} ({p.Value.CompletionPercent():F1}%)", p.Value.Title, p.Value.DescrConcat(45)));
+                    string.Format("{0,-6}{1,-30}{2,-18}{3,-30}{4,0}", p.Key, Utils.TimeDisplay(p.Value.DateCreated() ?? DateTime.Now), $"{p.Value.TasksDone()}/{p.Value.TasksTotal()} ({p.Value.CompletionPercent():F1}%)", p.Value.Title, p.Value.DescrConcat(30)));
             }
         }
 
@@ -33,11 +31,11 @@ namespace Prj {
 
                 Console.WriteLine();
 
-                // TODO: add date formatting to CmdStat
-
                 if (row.Tasks.Length > 0) {
                     Console.WriteLine(Utils.Color("underline") +
-                            string.Format("{0,-6}{1,-8}{2,-30}{3,-40}", "ID", "Done", "Created", "Text") + Utils.Color("reset"));
+                            string.Format("{0,-6}{1,-8}{2,-34}{3,-69}", "ID", "Done", "Created", "Text") + Utils.Color("reset"));
+
+                    // TODO: sort with most recent tasks at the bottom
                     foreach (ProjectStorage.Task task in row.Tasks) {
                         Console.Write(
                             string.Format("{0,-6}", task.Id));
@@ -50,7 +48,7 @@ namespace Prj {
                                 string.Format("{0,-8}", "."));
 
                         Console.WriteLine(
-                            string.Format("{0,-30}{1,0}", task.Date, task.Text));
+                            string.Format("{0,-34}{1,0}", Utils.TimeDisplay(task.Date), task.Text));
                     }
                 }
                 else {
@@ -62,10 +60,12 @@ namespace Prj {
 
                 if (row.Logs.Length > 0) {
                     Console.WriteLine(Utils.Color("underline") +
-                            string.Format("{0,-14}{1,-30}{2,-40}", "ID", "Created", "Text") + Utils.Color("reset"));
+                            string.Format("{0,-14}{1,-34}{2,-69}", "ID", "Created", "Text") + Utils.Color("reset"));
+
+                    // TODO: sort with most recent logs at the bottom
                     foreach (ProjectStorage.Log log in row.Logs) {
                         Console.WriteLine(
-                            string.Format("{0,-14}{1,-30}{2,0}", log.Id, log.Created, log.Text));
+                            string.Format("{0,-14}{1,-34}{2,0}", log.Id, Utils.TimeDisplay(log.Created), log.Text));
 
                     }
                 }
@@ -77,8 +77,6 @@ namespace Prj {
             else {
                 Utils.MsgErr($"project id '{id}' does not exist");
             }
-
-            // TODO: check that id is positive and that it exists as a project
         }
 
         private static void CmdHelp(int _) {
