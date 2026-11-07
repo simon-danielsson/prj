@@ -23,6 +23,10 @@ namespace Prj {
         // }
 
         static void Main() {
+            if (Console.WindowWidth < 120) {
+                Utils.MsgErr("a minimum terminal width of 120 is required to run this program");
+                return;
+            }
 
             // ProjectStore.DebugProjectsPrint();
 
