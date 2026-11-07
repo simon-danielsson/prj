@@ -27,6 +27,8 @@ namespace Wlk {
         }
 
         static public bool SaveToFile() {
+            if (Projects.Count == 0)
+                return false;
             string? path = Utils.GetStoragePath();
             if (path == null) {
                 Console.Error.WriteLine("Error: could not save to file, failed to fetch storage path");

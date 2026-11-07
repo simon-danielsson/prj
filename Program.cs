@@ -24,28 +24,6 @@ namespace Wlk {
         //         return;
         // }
 
-        class Args {
-            readonly static string[] args = Environment.GetCommandLineArgs();
-            readonly int argsLen = args.Length;
-            private int cursor = 1;
-
-            public bool ArgLeft() {
-                return cursor + 1 <= argsLen;
-            }
-
-            public string? Current() {
-                return args[cursor];
-            }
-
-            public string? Next() {
-                return ArgLeft() ? args[cursor += 1] : null;
-            }
-
-            public string? PeekNext() {
-                return ArgLeft() ? args[cursor + 1] : null;
-            }
-        }
-
         static void Main() {
 
             // ProjectStorage.DebugPopulateProjects();
@@ -63,25 +41,50 @@ namespace Wlk {
                             row.Function(-1);
                             break;
                         }
-                        if (a.ArgLeft() && a.PeekNext() != null) {
-                            row.Function(Convert.ToInt32(a.Next()));
+                        if (int.TryParse(a.Next(), out var functionArg)) {
+                            row.Function(functionArg);
                             break;
                         }
                         else {
-                            Console.WriteLine($"No argument provided for command '{arg}' -- try 'help'");
-                            return;
+                            Utils.MsgErr($"missing or malformed argument for command '{arg}'");
+                            break;
                         }
                     }
                     else {
-                        Console.WriteLine($"Illegal command: '{arg}' -- try 'help'");
+                        Utils.MsgErr($"illegal command '{arg}'");
                         break;
                     }
                 }
                 a.Next();
             }
 
-            if (!ProjectStorage.SaveToFile())
-                return;
+            ProjectStorage.SaveToFile();
+        }
+
+        class Args {
+            readonly static string[] args = Environment.GetCommandLineArgs();
+            readonly int argsLen = args.Length;
+            private int cursor = 1;
+
+            public bool ArgLeft() {
+                return cursor + 1 <= argsLen;
+            }
+
+            public bool HasNext() {
+                return cursor + 1 < argsLen;
+            }
+
+            public string? Current() {
+                return args[cursor];
+            }
+
+            public string? Next() {
+                return HasNext() ? args[cursor += 1] : null;
+            }
+
+            public string? PeekNext() {
+                return HasNext() ? args[cursor + 1] : null;
+            }
         }
     }
 }

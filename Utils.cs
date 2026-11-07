@@ -27,7 +27,7 @@ namespace Wlk {
         public static string? GetStoragePath() {
             string? homeDir = Environment.GetEnvironmentVariable("HOME");
             if (homeDir is null) {
-                Console.Error.WriteLine("Error: environment variable '$HOME' not set");
+                MsgErr("environment variable '$HOME' not set");
                 return null;
             }
             return homeDir + "/.wlk.storage";
@@ -35,19 +35,19 @@ namespace Wlk {
 
         public static bool InitStorage() {
             string? path = GetStoragePath();
-            Console.WriteLine("Initializing new storage...");
+            MsgInfo("initializing new storage...");
             if (path == null) {
-                Console.Error.WriteLine("Error: failed to fetch storage path");
+                MsgErr("failed to fetch storage path");
                 return false;
             }
             else {
                 try {
                     File.Create(path).Dispose();
-                    Console.WriteLine($"New storage has been initialized at: {path}");
+                    MsgInfo($"new storage has been initialized at: {path}");
                     return true;
                 }
                 catch {
-                    Console.Error.WriteLine("Error: failed to save file to storage path");
+                    MsgErr("failed to save file to storage path");
                     return false;
                 }
             }
@@ -99,6 +99,14 @@ namespace Wlk {
             }
         }
 
+        public static void MsgErr(string msg) {
+            Console.Error.WriteLine($"Error: {msg} -- try 'help'");
+        }
+
+        public static void MsgInfo(string msg) {
+            Console.WriteLine($"Info: {msg}");
+        }
+
         /// <summary>
         /// Launches user ($EDITOR) editor on a temporary file, with default
         /// file content defined by parameter defaultContent. Returns the
@@ -108,7 +116,7 @@ namespace Wlk {
             string? output = null;
             string? ed = Environment.GetEnvironmentVariable("EDITOR");
             if (ed is null) {
-                Console.Error.WriteLine("Error: environment variable '$EDITOR' not set");
+                MsgErr("environment variable '$EDITOR' not set");
                 return null;
             }
 

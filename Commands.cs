@@ -20,6 +20,7 @@ namespace Wlk {
 
         private static void CmdStat(int id) {
             Console.WriteLine($"requested id: {id}");
+            // TODO: check that id is positive and that it exists as a project
         }
 
         private static void CmdHelp(int _) {
