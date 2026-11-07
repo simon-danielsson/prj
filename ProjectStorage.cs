@@ -7,11 +7,12 @@ namespace Prj {
     class ProjectStorage {
         static public Dictionary<int, Project> Projects = [];
 
-        public class Project(string title, string? descr, Task[] tasks, Log[] logs) {
+        public class Project(string title, string? descr, Task[] tasks, Log[] logs, DateTimeOffset? lastChanged) {
             public string Title = title;
             public string? Descr = descr;
             public Task[] Tasks = tasks;
             public Log[] Logs = logs;
+            public DateTimeOffset? LastChanged = lastChanged;
 
             public DateTimeOffset? DateCreated() {
                 var oldestTask = Tasks.MinBy(i => i.Date)?.Date;
@@ -82,7 +83,7 @@ namespace Prj {
         static public bool LoadFromFile() {
             string? path = Utils.GetStoragePath();
             if (path == null) {
-                Console.Error.WriteLine("Error: failed to fetch storage path");
+                Console.Error.WriteLine("Error: failed to get storage path");
                 return false;
             }
             else {
@@ -96,7 +97,7 @@ namespace Prj {
                 if (jsonString.Length > 1) {
                     Dictionary<int, Project>? DeserProjects =
                         JsonSerializer.Deserialize<Dictionary<int, Project>>(jsonString, Utils.JsonOptions);
-                    Projects = DeserProjects ?? throw new InvalidOperationException("Failed to serialize storage file. Run the 'init' command to do a hard reset.");
+                    Projects = DeserProjects ?? throw new InvalidOperationException($"Failed to serialize storage file: '{path}'");
                 }
                 return true;
 
@@ -133,7 +134,8 @@ namespace Prj {
                     new(2026, 10, 12, 16, 20, 0, TimeSpan.FromHours(1)), 1),
                     new("Palette debate",     "Went with teal accents instead of orange. Jury is out.",
                     new(2026, 10, 18, 13, 5, 0, TimeSpan.FromHours(1)), 2),
-                ]);
+                ],
+                new(2026, 10, 18, 13, 5, 0, TimeSpan.FromHours(1)));
 
             Projects[2] = new Project(
                 "Garage Sensor Firmware",
@@ -151,7 +153,8 @@ namespace Prj {
                     new(2026, 09, 14, 19, 55, 0, TimeSpan.FromHours(2)), 0),
                     new("Range readings noisy", "±15cm jitter; adding a median filter next.",
                     new(2026, 09, 16, 20, 30, 0, TimeSpan.FromHours(2)), 1),
-                ]);
+                ],
+                new(2026, 09, 16, 20, 30, 0, TimeSpan.FromHours(2)));
 
             Projects[3] = new Project(
                 "Meal Planning",
@@ -165,13 +168,15 @@ namespace Prj {
                 [
                     new("Recipes moved to notebook", "Keeping logs here minimal.",
                     new(2026, 10, 19, 8, 0, 0, TimeSpan.FromHours(1)), 0),
-                ]);
+                ],
+                new(2026, 10, 26, 8, 15, 0, TimeSpan.FromHours(1)));
 
             Projects[4] = new Project(
                 "Empty Shell",
                 "Edge case: project with data but zero tasks and zero logs.",
                 [],
-                []);
+                [],
+                new(2026, 10, 01, 12, 0, 0, TimeSpan.FromHours(1)));
 
             Projects[5] = new Project(
                 "Learn Reactive Extensions",
@@ -182,7 +187,8 @@ namespace Prj {
                     new("Chapter 2: Reducing a sequence",
                     new(2026, 11, 03, 20, 0, 0, TimeSpan.FromHours(1)), false, 1),
                 ],
-                []);
+                [],
+                new(2026, 11, 03, 21, 0, 0, TimeSpan.FromHours(1)));
         }
 
     }

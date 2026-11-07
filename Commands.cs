@@ -9,15 +9,21 @@ namespace Prj {
                 return;
             }
 
-            // TODO: sort with most recent projects at the bottom
+            // TODO: sort with most recently changed projects at the bottom
 
+            Utils.MsgInfo("ordered by 'Last changed' ascending.\n");
             Console.WriteLine(Utils.Color("underline") +
-                    string.Format("{0,-6}{1, -30}{2, -18}{3,-30}{4,-33}", "ID", "Created", "Completion", "Title", "Description") + Utils.Color("reset"));
+                    string.Format("{0,-4}{1, -30}{2,-16}{3, -21}{4,-18}", "ID", "Title", "Completion", "Last changed", "Created") + Utils.Color("reset"));
 
-            foreach (KeyValuePair<int, ProjectStorage.Project> p in ProjectStorage.Projects) {
-
+            foreach (var p in ProjectStorage.Projects.OrderBy(kvp => kvp.Value.LastChanged)) {
                 Console.WriteLine(
-                    string.Format("{0,-6}{1,-30}{2,-18}{3,-30}{4,0}", p.Key, Utils.TimeDisplay(p.Value.DateCreated() ?? DateTime.Now), $"{p.Value.TasksDone()}/{p.Value.TasksTotal()} ({p.Value.CompletionPercent():F1}%)", p.Value.Title, p.Value.DescrConcat(30)));
+                    string.Format("{0,-4}{1,-30}{2, -16}{3,-21}{4,-4}",
+                        p.Key,
+                        p.Value.Title,
+                        $"{p.Value.TasksDone()}/{p.Value.TasksTotal()} - {p.Value.CompletionPercent():F0}%",
+                        Utils.TimeDisplay(p.Value.LastChanged),
+                        Utils.TimeDisplay(p.Value.DateCreated())
+                        ));
             }
         }
 
@@ -33,12 +39,12 @@ namespace Prj {
 
                 if (row.Tasks.Length > 0) {
                     Console.WriteLine(Utils.Color("underline") +
-                            string.Format("{0,-6}{1,-8}{2,-34}{3,-69}", "ID", "Done", "Created", "Text") + Utils.Color("reset"));
+                            string.Format("{0,-4}{1,-8}{2,-34}{3,-69}", "ID", "Done", "Created", "Text") + Utils.Color("reset"));
 
                     // TODO: sort with most recent tasks at the bottom
                     foreach (ProjectStorage.Task task in row.Tasks) {
                         Console.Write(
-                            string.Format("{0,-6}", task.Id));
+                            string.Format("{0,-4}", task.Id));
 
                         if (task.Done)
                             Console.Write(
@@ -60,12 +66,12 @@ namespace Prj {
 
                 if (row.Logs.Length > 0) {
                     Console.WriteLine(Utils.Color("underline") +
-                            string.Format("{0,-14}{1,-34}{2,-69}", "ID", "Created", "Text") + Utils.Color("reset"));
+                            string.Format("{0,-12}{1,-34}{2,-69}", "ID", "Created", "Text") + Utils.Color("reset"));
 
                     // TODO: sort with most recent logs at the bottom
                     foreach (ProjectStorage.Log log in row.Logs) {
                         Console.WriteLine(
-                            string.Format("{0,-14}{1,-34}{2,0}", log.Id, Utils.TimeDisplay(log.Created), log.Text));
+                            string.Format("{0,-12}{1,-34}{2,0}", log.Id, Utils.TimeDisplay(log.Created), log.Text));
 
                     }
                 }

@@ -27,7 +27,11 @@ namespace Prj {
 
         /// <summary> Takes a DateTimeOffset and formats it nicely for printing
         /// to console. </summary>
-        public static string TimeDisplay(this DateTimeOffset t) => t.ToString("D", CultureInfo.CreateSpecificCulture("en-US"));
+        public static string TimeDisplay(DateTimeOffset? t) {
+            if (t is DateTimeOffset ta)
+                return ta.ToString("MMM dd yyyy, HH:mm");
+            return "";
+        }
 
         public static string? GetStoragePath() {
             string? homeDir = Environment.GetEnvironmentVariable("HOME");
@@ -109,7 +113,7 @@ namespace Prj {
         }
 
         public static void MsgInfo(string msg) {
-            Console.WriteLine($"Info: {msg}");
+            Console.Error.WriteLine($"Info: {msg}");
         }
 
         /// <summary>
