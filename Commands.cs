@@ -1,4 +1,8 @@
+using System.Text.RegularExpressions;
+#pragma warning disable SYSLIB1045
+
 namespace Prj {
+
     /// <summary>
     /// Handling and execution of program commands (hit after Program.cs)
     /// </summary>
@@ -9,17 +13,15 @@ namespace Prj {
                 return;
             }
 
-            // TODO: sort with most recently changed projects at the bottom
-
             Utils.MsgInfo("ordered by 'Last changed' ascending.\n");
             Console.WriteLine(Utils.Color("underline") +
-                    string.Format("{0,-4}{1, -30}{2,-16}{3, -21}{4,-18}", "ID", "Title", "Completion", "Last changed", "Created") + Utils.Color("reset"));
+                    string.Format("{0,-4}{1, -34}{2,-16}{3, -21}{4,-18}", "ID", "Title", "Completion", "Last changed", "Created") + Utils.Color("reset"));
 
             foreach (var p in ProjectStorage.Projects.OrderBy(kvp => kvp.Value.LastChanged)) {
                 Console.WriteLine(
-                    string.Format("{0,-4}{1,-30}{2, -16}{3,-21}{4,-4}",
+                    string.Format("{0,-4}{1,-34}{2, -16}{3,-21}{4,-4}",
                         p.Key,
-                        p.Value.Title,
+                        p.Value.TitleConcat(30),
                         $"{p.Value.TasksDone()}/{p.Value.TasksTotal()} - {p.Value.CompletionPercent():F0}%",
                         Utils.TimeDisplay(p.Value.LastChanged),
                         Utils.TimeDisplay(p.Value.DateCreated())
@@ -31,9 +33,46 @@ namespace Prj {
             Utils.MsgErr("this command is not implemented yet");
         }
 
+        private static void CmdNew(string? _) {
+            int? newId = ProjectStorage.FindVacantIdProject();
+            if (newId == null) {
+                Utils.MsgErr("project limit has been reached");
+                return;
+            }
+
+            string? title = null;
+            string? descr = null;
+            string? edOutput = Utils.EditInEditor(Utils.GetEmbeddedContent("editorNewProject.txt"));
+            if (edOutput is string userContent) {
+                // Excuse: I needed to use Regex here since the regular Split method had no
+                // overload for keeping the split delimeters.
+                foreach (string s in Regex.Split(userContent, @"(\r?\n)")) {
+                    if (title == null) {
+                        if (!s.IsWhiteSpace() && title == null)
+                            title = s.Trim();
+                    }
+                    else {
+                        descr += s;
+                    }
+                }
+            }
+            else if (edOutput == null || title == null) {
+                Utils.MsgErr("failed to create project due to null editor output.");
+            }
+
+            // Console.WriteLine($"new id: {newId}");
+            if (descr != null)
+                descr = descr.Trim();
+            if (title != null && newId is int id) {
+                ProjectStorage.AddNewProject(title, descr, id);
+                Utils.MsgInfo($"new project with id '{id}' was created successfully.");
+            }
+        }
+
         // TODO: edit formatting of task/log lists to allow for larger bodies in project overview
         private static void CmdShow(string? id_raw) {
             int id = CmdArgParse(id_raw)[0];
+
             if (id >= 0 && ProjectStorage.Projects.TryGetValue(id, out var row)) {
 
                 Console.WriteLine(Utils.Color("bold") +
@@ -137,8 +176,7 @@ namespace Prj {
                     "show", new("Display project overview.", "<id>", true, CmdShow)
                 },
                 {
-                    // TODO: implement CmdNew
-                    "new", new("Create a new project.", null, true, CmdNotImpl)
+                    "new", new("Create a new project.", null, false, CmdNew)
                 },
                 {
                     // TODO: implement CmdEdit

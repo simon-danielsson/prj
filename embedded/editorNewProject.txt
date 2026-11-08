@@ -1,0 +1,5 @@
+Insert title here! The first non-empty line is the title.
+
+Insert description here!
+All lines after the first non-empty line is the description.
+In neovim/vim, exit with `:wqa` to finish editing.

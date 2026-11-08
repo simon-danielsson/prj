@@ -11,4 +11,8 @@
         <EmbeddedResource Include="embedded/help.txt" />
     </ItemGroup>
 
+    <ItemGroup>
+        <EmbeddedResource Include="embedded/editorNewProject.txt" />
+    </ItemGroup>
+
 </Project>

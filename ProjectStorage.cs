@@ -7,6 +7,18 @@ namespace Prj {
     class ProjectStorage {
         static public Dictionary<int, Project> Projects = [];
 
+        public static void AddNewProject(string title, string? descr, int id) {
+            Projects.Add(id, new Project(title, descr, [], [], DateTime.Now));
+        }
+
+        public static int? FindVacantIdProject() {
+            for (int i = 1; i < 99; i++) {
+                if (!Projects.ContainsKey(i))
+                    return i;
+            }
+            return null;
+        }
+
         public class Project(string title, string? descr, Task[] tasks, Log[] logs, DateTimeOffset? lastChanged) {
             public string Title = title;
             public string? Descr = descr;
@@ -18,7 +30,7 @@ namespace Prj {
                 var oldestTask = Tasks.MinBy(i => i.Date)?.Date;
                 var oldestLog = Logs.MinBy(i => i.Created)?.Created;
                 return (oldestTask, oldestLog) switch {
-                    (null, null) => null,
+                    (null, null) => LastChanged,
                     (null, { } log) => log,
                     ( { } task, null) => task,
                     ( { } task, { } log) => task > log ? log : task
@@ -41,6 +53,11 @@ namespace Prj {
                         : Descr[..threshold] + "...";
                 }
                 return "";
+            }
+            public string TitleConcat(int threshold) {
+                return Title.Length <= threshold
+                    ? Title
+                    : Title[..threshold] + "...";
             }
         }
 
