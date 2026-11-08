@@ -47,8 +47,8 @@ namespace Prj {
 
             if (id >= 0 && ProjectStorage.Projects.TryGetValue(id, out var row)) {
 
-                Console.WriteLine(Utils.Color("bold") +
-                        $"{id} - {row.Title}" + Utils.Color("reset"));
+                Console.WriteLine(Utils.Color("underline") +
+                        $"{row.Title}" + Utils.Color("reset"));
                 if (row.Descr != null && row.Descr.Length > 0)
                     Console.WriteLine(row.Descr);
 
@@ -58,7 +58,7 @@ namespace Prj {
                         string.Format("{0,-93}", "Logs") + Utils.Color("reset"));
                 if (row.Logs.Count > 0) {
                     foreach (var log in row.Logs.OrderBy(t => t.Created)) {
-                        Console.WriteLine(Utils.Color("overline") +
+                        Console.WriteLine(Utils.Color("bold") +
                             string.Format($"[{log.Id}] {Utils.TimeDisplay(log.Created)}") + Utils.Color("reset"));
                         Console.WriteLine(
                             string.Format(log.Text));
