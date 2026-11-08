@@ -10,14 +10,8 @@
                 return;
             }
 
-            // ProjectStore.DebugProjectsPrint();
-
             if (!ProjectStorage.LoadFromFile())
                 return;
-
-            // ProjectStorage.DebugPopulateProjects();
-            // ProjectStorage.SaveToFile();
-            // return;
 
             var a = new Args();
 
