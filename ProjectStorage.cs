@@ -129,11 +129,11 @@ namespace Prj {
                 ],
                 [
                     new("Kickoff meeting",    "Agreed on scope: 5 pages, no CMS for now.",
-                    new(2026, 10, 05, 10, 0, 0, TimeSpan.FromHours(1)), 0),
+                    new(2026, 10, 05, 10, 0, 0, TimeSpan.FromHours(1)), 4),
                     new("Wireframes approved","Client signed off on version 3.",
-                    new(2026, 10, 12, 16, 20, 0, TimeSpan.FromHours(1)), 1),
+                    new(2026, 10, 12, 16, 20, 0, TimeSpan.FromHours(1)), 5),
                     new("Palette debate",     "Went with teal accents instead of orange. Jury is out.",
-                    new(2026, 10, 18, 13, 5, 0, TimeSpan.FromHours(1)), 2),
+                    new(2026, 10, 18, 13, 5, 0, TimeSpan.FromHours(1)), 6),
                 ],
                 new(2026, 10, 18, 13, 5, 0, TimeSpan.FromHours(1)));
 
@@ -150,9 +150,9 @@ namespace Prj {
                 ],
                 [
                     new("First flash success", "Blink LED on boot. It lives!",
-                    new(2026, 09, 14, 19, 55, 0, TimeSpan.FromHours(2)), 0),
+                    new(2026, 09, 14, 19, 55, 0, TimeSpan.FromHours(2)), 3),
                     new("Range readings noisy", "±15cm jitter; adding a median filter next.",
-                    new(2026, 09, 16, 20, 30, 0, TimeSpan.FromHours(2)), 1),
+                    new(2026, 09, 16, 20, 30, 0, TimeSpan.FromHours(2)), 4),
                 ],
                 new(2026, 09, 16, 20, 30, 0, TimeSpan.FromHours(2)));
 
@@ -167,7 +167,7 @@ namespace Prj {
                 ],
                 [
                     new("Recipes moved to notebook", "Keeping logs here minimal.",
-                    new(2026, 10, 19, 8, 0, 0, TimeSpan.FromHours(1)), 0),
+                    new(2026, 10, 19, 8, 0, 0, TimeSpan.FromHours(1)), 2),
                 ],
                 new(2026, 10, 26, 8, 15, 0, TimeSpan.FromHours(1)));
 
