@@ -5,7 +5,8 @@ https://github.com/simon-danielsson/prj
 USAGE:
 prj <command> [args]
 
-Most editing is done by calling an external text-editor. Set environment variable
-'$EDITOR' to your preferred editor (ex. neovim).
+* Most editing is done by calling an external text-editor. Set environment variable
+  '$EDITOR' to your preferred editor (ex. neovim).
+* Perpetual storage found at '$HOME/.prj.storage'.
 
 COMMANDS:
