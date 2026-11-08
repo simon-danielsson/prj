@@ -27,7 +27,11 @@ namespace Prj {
             }
         }
 
-        private static void CmdStat(int id) {
+        private static void CmdNotImpl(int _) {
+            Utils.MsgErr("this command is not implemented yet");
+        }
+
+        private static void CmdShow(int id) {
             if (id >= 0 && ProjectStorage.Projects.TryGetValue(id, out var row)) {
 
                 Console.WriteLine(Utils.Color("bold") +
@@ -113,7 +117,19 @@ namespace Prj {
                     "ls", new("List all projects.", null, false, CmdList)
                 },
                 {
-                    "stat", new("Display project overview.", "<id>", true, CmdStat)
+                    "show", new("Display project overview.", "<id>", true, CmdShow)
+                },
+                {
+                    "edit", new("Edit item by id. Example (task 1 of project 3): prj edit 3-1", "<id>", true, CmdNotImpl)
+                },
+                {
+                    "task", new("Create new task on project <id>. Example (new task on project 2): prj task 2", "<id>", true, CmdNotImpl)
+                },
+                {
+                    "log", new("Create new log on project <id>. Example (new log on project 8): prj log 8", "<id>", true, CmdNotImpl)
+                },
+                {
+                    "rm", new("Remove item by id. Example (remove task 2 of project 1): prj task 1-2", "<id>", true, CmdNotImpl)
                 },
             };
 
@@ -127,9 +143,11 @@ USAGE:
 
 COMMANDS:
     ls                                 List all projects
+
     stat    <id>                       Show project overview: description,
-                                       lists with completion, overall %, last log
-    desc    <id> [text...]             Show or set a project description
+
+    edit    <id> [text...]             Show or set a project description
+
     list    <id> add <listname>        Add a todo list to a project
     item    <id> <listname>            Item subcommands (below)
     log     <id> [text...]             Append a log entry; no text opens $EDITOR
