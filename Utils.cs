@@ -4,6 +4,17 @@ using System.Text.Json;
 
 namespace Prj {
 
+    static class Msg {
+        public static void Error(string msg) {
+            Console.Error.WriteLine($"Error: {msg}");
+        }
+
+        public static void Info(string msg) {
+            Console.Error.WriteLine($"Info: {msg}");
+        }
+
+    }
+
     /// <summary>
     /// ANSI Colors
     /// </summary>
@@ -51,7 +62,7 @@ namespace Prj {
         public static string? GetStoragePath() {
             string? homeDir = Environment.GetEnvironmentVariable("HOME");
             if (homeDir is null) {
-                MsgErr("environment variable '$HOME' not set");
+                Msg.Error("environment variable '$HOME' not set");
                 return null;
             }
             return homeDir + "/.prj.storage";
@@ -59,19 +70,19 @@ namespace Prj {
 
         public static bool InitStorage() {
             string? path = GetStoragePath();
-            MsgInfo("initializing new storage...");
+            Msg.Info("initializing new storage...");
             if (path == null) {
-                MsgErr("failed to fetch storage path");
+                Msg.Error("failed to fetch storage path");
                 return false;
             }
             else {
                 try {
                     File.Create(path).Dispose();
-                    MsgInfo($"new storage has been initialized at: {path}");
+                    Msg.Info($"new storage has been initialized at: {path}");
                     return true;
                 }
                 catch {
-                    MsgErr("failed to save file to storage path");
+                    Msg.Error("failed to save file to storage path");
                     return false;
                 }
             }
@@ -123,14 +134,6 @@ namespace Prj {
             }
         }
 
-        public static void MsgErr(string msg) {
-            Console.Error.WriteLine($"Error: {msg}");
-        }
-
-        public static void MsgInfo(string msg) {
-            Console.Error.WriteLine($"Info: {msg}");
-        }
-
         /// <summary>
         /// Launches user ($EDITOR) editor on a temporary file, with default
         /// file content defined by parameter defaultContent. Returns the
@@ -140,7 +143,7 @@ namespace Prj {
             string? output = null;
             string? ed = Environment.GetEnvironmentVariable("EDITOR");
             if (ed is null) {
-                MsgErr("environment variable '$EDITOR' not set");
+                Msg.Error("environment variable '$EDITOR' not set");
                 return null;
             }
 

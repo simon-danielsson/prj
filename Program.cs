@@ -6,7 +6,7 @@
 
         static void Main() {
             if (Console.WindowWidth < 120) {
-                Utils.MsgErr("a minimum terminal width of 120 is required to run this program");
+                Msg.Error("a minimum terminal width of 120 is required to run this program");
                 return;
             }
 
@@ -28,7 +28,7 @@
                         }
                     }
                     else {
-                        Utils.MsgErr($"illegal command '{arg}' - use command 'help' if you're feeling lost.");
+                        Msg.Error($"illegal command '{arg}' - use command 'help' if you're feeling lost.");
                         break;
                     }
                 }
