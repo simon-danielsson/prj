@@ -40,14 +40,14 @@ language.
 
 ## Install
   
-Simply clone this repo and compile on your own machine.
+Clone this repo and run the [provided install script](install.sh).
   
 ---
 <div id="usage"></div>
   
 ## Usage
    
-No usage section written yet.
+After installing, run `prj help` for details on usage.
     
 ---
 <div id="license"></div>
