@@ -120,6 +120,9 @@ namespace Prj {
                     "show", new("Display project overview.", "<id>", true, CmdShow)
                 },
                 {
+                    "new", new("Create new project.", "<id>", true, CmdNotImpl)
+                },
+                {
                     "edit", new("Edit item by id. Example (task 1 of project 3): prj edit 3-1", "<id>", true, CmdNotImpl)
                 },
                 {
