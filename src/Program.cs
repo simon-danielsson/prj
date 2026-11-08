@@ -1,4 +1,4 @@
-﻿namespace Prj {
+﻿namespace Prj.src {
     /// <summary>
     /// Entrypoint and argument handling.
     /// </summary>

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace Prj {
+namespace Prj.src {
     /// <summary>
     /// Owns the data/types/functions for projects and their children.
     /// </summary>
@@ -89,25 +89,25 @@ namespace Prj {
         static public bool SaveToFile() {
             if (Projects.Count == 0)
                 return false;
-            string? path = Utils.GetStoragePath();
+            string? path = Util.GetStoragePath();
             if (path == null) {
                 Console.Error.WriteLine("Error: could not save to file, failed to fetch storage path");
                 return false;
             }
-            string jsonString = JsonSerializer.Serialize(Projects, Utils.JsonOptions);
+            string jsonString = JsonSerializer.Serialize(Projects, Util.JsonOptions);
             File.WriteAllText(path, jsonString);
             return true;
         }
 
         static public bool LoadFromFile() {
-            string? path = Utils.GetStoragePath();
+            string? path = Util.GetStoragePath();
             if (path == null) {
                 Console.Error.WriteLine("Error: failed to get storage path");
                 return false;
             }
             else {
                 if (!File.Exists(path)) {
-                    if (!Utils.InitStorage())
+                    if (!Util.InitStorage())
                         return false;
                 }
 
@@ -115,7 +115,7 @@ namespace Prj {
                     = File.ReadAllText(path);
                 if (jsonString.Length > 1) {
                     Dictionary<int, Project>? DeserProjects =
-                        JsonSerializer.Deserialize<Dictionary<int, Project>>(jsonString, Utils.JsonOptions);
+                        JsonSerializer.Deserialize<Dictionary<int, Project>>(jsonString, Util.JsonOptions);
                     Projects = DeserProjects ?? throw new InvalidOperationException($"Failed to serialize storage file: '{path}'");
                 }
                 return true;

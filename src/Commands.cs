@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 // TODO: there is currently quite a lot of messy and duplicate code in this document. It's going to require substantial refactoring.
 
-namespace Prj {
+namespace Prj.src {
 
     /// <summary>
     /// Handling and execution of program commands (hit after Program.cs)
@@ -28,10 +28,10 @@ namespace Prj {
                 Console.WriteLine(
                     string.Format("{0,-4}{1,-34}{2, -16}{3,-21}{4,-4}",
                         p.Key,
-                        Utils.Concat(p.Value.Title, 30),
+                        Util.Concat(p.Value.Title, 30),
                         $"{p.Value.TasksDone()}/{p.Value.TasksTotal()} - {p.Value.CompletionPercent():F0}%",
-                        Utils.TimeDisplay(p.Value.LastChanged),
-                        Utils.TimeDisplay(p.Value.DateCreated())
+                        Util.TimeDisplay(p.Value.LastChanged),
+                        Util.TimeDisplay(p.Value.DateCreated())
                         ));
             }
         }
@@ -59,7 +59,7 @@ namespace Prj {
                 if (row.Logs.Count > 0) {
                     foreach (var log in row.Logs.OrderBy(t => t.Created)) {
                         Console.WriteLine(Color.Ansi("bold") +
-                            string.Format($"[{log.Id}] {Utils.TimeDisplay(log.Created)}") + Color.Ansi("reset"));
+                            string.Format($"[{log.Id}] {Util.TimeDisplay(log.Created)}") + Color.Ansi("reset"));
                         Console.WriteLine(
                             string.Format(log.Text));
 
@@ -80,7 +80,7 @@ namespace Prj {
                         if (task.Done)
                             Console.Write(Color.Ansi("crossed"));
                         Console.Write(
-                            string.Format("{0,-71}{1,0}", Utils.Concat(task.Text, 67), Utils.TimeDisplay(task.Date)));
+                            string.Format("{0,-71}{1,0}", Util.Concat(task.Text, 67), Util.TimeDisplay(task.Date)));
                         Console.WriteLine(Color.Ansi("reset"));
                     }
                 }
@@ -103,7 +103,7 @@ namespace Prj {
 
             string? title = null;
             string? descr = null;
-            string? edOutput = Utils.EditInEditor(Utils.GetEmbeddedContent("editorNewProject.txt"));
+            string? edOutput = Util.EditInEditor(Util.GetEmbeddedContent("editorNewProject.txt"));
             if (edOutput is string userContent) {
                 // Excuse: I needed to use Regex here since the regular Split method had no
                 // overload for keeping the split delimeters.
@@ -146,7 +146,7 @@ namespace Prj {
                 }
 
                 string? text = null;
-                string? edOutput = Utils.EditInEditor("");
+                string? edOutput = Util.EditInEditor("");
                 if (edOutput is string userContent && newId is int id) {
                     ProjectStorage.AddNewTask(ids[0], userContent.Split('\n').First(), id);
                     Msg.Info($"new task '{id}' in project '{ids[0]}' was created successfully.");
@@ -177,7 +177,7 @@ namespace Prj {
                 }
 
                 string? text = null;
-                string? edOutput = Utils.EditInEditor("");
+                string? edOutput = Util.EditInEditor("");
                 if (edOutput is string userContent && newId is int id) {
                     ProjectStorage.AddNewLog(ids[0], userContent.Trim(), id);
                     Msg.Info($"new log '{id}' in project '{ids[0]}' was created successfully.");
@@ -280,7 +280,7 @@ namespace Prj {
                 if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
                     string oldContent = project.Title + "\n\n" + project.Descr;
                     string? title = null, descr = null;
-                    string? edOutput = Utils.EditInEditor(oldContent);
+                    string? edOutput = Util.EditInEditor(oldContent);
                     if (edOutput is string userContent) {
                         // Excuse: I needed to use Regex here since the regular Split method had no
                         // overload for keeping the split delimeters.
@@ -323,7 +323,7 @@ namespace Prj {
                 if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
                     int listIndex;
                     if ((listIndex = project.Tasks.FindIndex(t => t.Id == ids[1])) >= 0) {
-                        string? edOutput = Utils.EditInEditor(project.Tasks[listIndex].Text);
+                        string? edOutput = Util.EditInEditor(project.Tasks[listIndex].Text);
                         if (edOutput is string userContent) {
                             project.Tasks[listIndex].Text = userContent.Split('\n').First();
                             project.LastChanged = DateTime.Now;
@@ -336,7 +336,7 @@ namespace Prj {
                         }
                     }
                     else if ((listIndex = project.Logs.FindIndex(t => t.Id == ids[1])) >= 0) {
-                        string? edOutput = Utils.EditInEditor(project.Logs[listIndex].Text);
+                        string? edOutput = Util.EditInEditor(project.Logs[listIndex].Text);
                         if (edOutput is string userContent) {
                             project.Logs[listIndex].Text = userContent.Split('\n').First();
                             project.LastChanged = DateTime.Now;
@@ -360,7 +360,7 @@ namespace Prj {
         }
 
         private static void CmdHelp(string? _) {
-            string helpTxt = Utils.GetEmbeddedContent("help.txt");
+            string helpTxt = Util.GetEmbeddedContent("help.txt");
             Console.Write($"{helpTxt}");
 
             foreach (KeyValuePair<string, CmdTableRow> row in CmdTable) {
