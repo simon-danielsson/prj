@@ -25,10 +25,8 @@
 ## Info
   
 **prj** is essentially a project organizer where each project contains a description, todo-list
-as well as a list of freeform logs.
-  
-This application was built for the explicit purpose of learning/exploring the C# programming
-language.
+as well as a list of freeform logs. This application was built for the explicit
+purpose of learning/exploring the C# programming language.
   
 ### Requirements
 - .NET
