@@ -1,4 +1,6 @@
-<h1 align="center">prj</h1>
+<p align="center">
+    <img src="media/logo.png" alt="prj" width="110"/>
+</p>
   
 <p align="center">
   <em>Opinionated todo-list application for the unix CLI.</em>
