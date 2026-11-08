@@ -71,15 +71,6 @@ namespace Prj {
                     return 0;
                 return TasksDone() / (float)TasksTotal() * 100;
             }
-
-            public string DescrConcat(int threshold) {
-                if (Descr != null) {
-                    return Descr.Length <= threshold
-                        ? Descr
-                        : Descr[..threshold] + "...";
-                }
-                return "";
-            }
         }
 
         public class Task(string text, DateTimeOffset date, bool done, int id) {
@@ -87,15 +78,6 @@ namespace Prj {
             public DateTimeOffset Date { get; init; } = date;
             public bool Done { get; set; } = done;
             public int Id { get; init; } = id;
-
-            public string TextConcat(int threshold) {
-                if (Text != null) {
-                    return Text.Length <= threshold
-                        ? Text
-                        : Text[..threshold] + "...";
-                }
-                return "";
-            }
         }
 
         public class Log(string text, DateTimeOffset created, int id) {

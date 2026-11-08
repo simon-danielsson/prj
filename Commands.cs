@@ -21,8 +21,8 @@ namespace Prj {
             }
 
             Utils.MsgInfo("ordered by 'Last changed' ascending.\n");
-            Console.WriteLine(Utils.Color("underline") +
-                    string.Format("{0,-4}{1, -34}{2,-16}{3, -21}{4,-18}", "ID", "Title", "Completion", "Last changed", "Created") + Utils.Color("reset"));
+            Console.WriteLine(Color.Ansi("underline") +
+                    string.Format("{0,-4}{1, -34}{2,-16}{3, -21}{4,-18}", "ID", "Title", "Completion", "Last changed", "Created") + Color.Ansi("reset"));
 
             foreach (var p in ProjectStorage.Projects.OrderBy(kvp => kvp.Value.LastChanged)) {
                 Console.WriteLine(
@@ -47,19 +47,19 @@ namespace Prj {
 
             if (id >= 0 && ProjectStorage.Projects.TryGetValue(id, out var row)) {
 
-                Console.WriteLine(Utils.Color("underline") +
-                        $"{row.Title}" + Utils.Color("reset"));
+                Console.WriteLine(Color.Ansi("underline") +
+                        $"{row.Title}" + Color.Ansi("reset"));
                 if (row.Descr != null && row.Descr.Length > 0)
                     Console.WriteLine(row.Descr);
 
                 Console.WriteLine();
 
-                Console.WriteLine(Utils.Color("underline") +
-                        string.Format("{0,-93}", "Logs") + Utils.Color("reset"));
+                Console.WriteLine(Color.Ansi("underline") +
+                        string.Format("{0,-93}", "Logs") + Color.Ansi("reset"));
                 if (row.Logs.Count > 0) {
                     foreach (var log in row.Logs.OrderBy(t => t.Created)) {
-                        Console.WriteLine(Utils.Color("bold") +
-                            string.Format($"[{log.Id}] {Utils.TimeDisplay(log.Created)}") + Utils.Color("reset"));
+                        Console.WriteLine(Color.Ansi("bold") +
+                            string.Format($"[{log.Id}] {Utils.TimeDisplay(log.Created)}") + Color.Ansi("reset"));
                         Console.WriteLine(
                             string.Format(log.Text));
 
@@ -70,18 +70,18 @@ namespace Prj {
                 }
                 Console.WriteLine();
 
-                Console.WriteLine(Utils.Color("underline") +
-                        string.Format("{0,-93}", "Tasks") + Utils.Color("reset"));
+                Console.WriteLine(Color.Ansi("underline") +
+                        string.Format("{0,-93}", "Tasks") + Color.Ansi("reset"));
 
                 if (row.Tasks.Count > 0) {
                     foreach (var task in row.Tasks.OrderByDescending(t => t.Done).ThenBy(t => t.Date)) {
                         Console.Write(
                             string.Format($"[{task.Id}] "));
                         if (task.Done)
-                            Console.Write(Utils.Color("crossed"));
+                            Console.Write(Color.Ansi("crossed"));
                         Console.Write(
                             string.Format("{0,-71}{1,0}", Utils.Concat(task.Text, 67), Utils.TimeDisplay(task.Date)));
-                        Console.WriteLine(Utils.Color("reset"));
+                        Console.WriteLine(Color.Ansi("reset"));
                     }
                 }
                 else {
