@@ -31,6 +31,7 @@ namespace Prj {
             Utils.MsgErr("this command is not implemented yet");
         }
 
+        // TODO: edit formatting of task/log lists to allow for larger bodies in project overview
         private static void CmdShow(int id) {
             if (id >= 0 && ProjectStorage.Projects.TryGetValue(id, out var row)) {
 
@@ -120,18 +121,23 @@ namespace Prj {
                     "show", new("Display project overview.", "<id>", true, CmdShow)
                 },
                 {
-                    "new", new("Create new project.", "<id>", true, CmdNotImpl)
+                    // TODO: implement CmdNew
+                    "new", new("Create a new project.", null, true, CmdNotImpl)
                 },
                 {
+                    // TODO: implement CmdEdit
                     "edit", new("Edit item by id. Example (task 1 of project 3): prj edit 3-1", "<id>", true, CmdNotImpl)
                 },
                 {
+                    // TODO: implement CmdTask
                     "task", new("Create new task on project <id>. Example (new task on project 2): prj task 2", "<id>", true, CmdNotImpl)
                 },
                 {
+                    // TODO: implement CmdLog
                     "log", new("Create new log on project <id>. Example (new log on project 8): prj log 8", "<id>", true, CmdNotImpl)
                 },
                 {
+                    // TODO: implement CmdRemove
                     "rm", new("Remove item by id. Example (remove task 2 of project 1): prj task 1-2", "<id>", true, CmdNotImpl)
                 },
             };
