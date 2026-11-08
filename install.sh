@@ -17,8 +17,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         cp ./out/osx-x64/prj $HOME/.local/bin
     fi
 else
-    echo "This install script is not compatible with your OS..."
-    echo "Compile and install it on your own!"
+    echo "Error: this program might not be compatible with your OS"
 fi
 
 
