@@ -15,4 +15,8 @@
         <EmbeddedResource Include="embedded/editorNewProject.txt" />
     </ItemGroup>
 
+    <PropertyGroup>
+        <PublishSingleFile>true</PublishSingleFile>
+    </PropertyGroup>
+
 </Project>

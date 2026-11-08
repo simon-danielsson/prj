@@ -2,6 +2,7 @@ notes.md
 dd.md
 /bin
 build.sh
+/out
 /obj
 wlk_old-c-version
 wlk.storage
