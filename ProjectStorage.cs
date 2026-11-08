@@ -88,7 +88,7 @@ namespace Prj {
         }
 
         public class Task(string text, DateTimeOffset date, bool done, int id) {
-            public string Text { get; init; } = text;
+            public string Text { get; set; } = text;
             public DateTimeOffset Date { get; init; } = date;
             public bool Done { get; set; } = done;
             public int Id { get; init; } = id;
@@ -104,7 +104,7 @@ namespace Prj {
         }
 
         public class Log(string text, DateTimeOffset created, int id) {
-            public string Text { get; init; } = text;
+            public string Text { get; set; } = text;
             public DateTimeOffset Created { get; init; } = created;
             public int Id { get; init; } = id;
         }

@@ -134,6 +134,7 @@ namespace Prj {
                 if (edOutput is string userContent && newId is int id) {
                     ProjectStorage.AddNewTask(ids[0], userContent.Split('\n').First(), id);
                     Utils.MsgInfo($"new task '{id}' in project '{ids[0]}' was created successfully.");
+                    project.LastChanged = DateTime.Now;
                 }
                 else if (edOutput == null || text == null) {
                     Utils.MsgErr("failed to create task due to null editor output.");
@@ -158,6 +159,7 @@ namespace Prj {
                 if (edOutput is string userContent && newId is int id) {
                     ProjectStorage.AddNewLog(ids[0], userContent.Trim(), id);
                     Utils.MsgInfo($"new log '{id}' in project '{ids[0]}' was created successfully.");
+                    project.LastChanged = DateTime.Now;
                 }
                 else if (edOutput == null || text == null) {
                     Utils.MsgErr("failed to create log due to null editor output.");
@@ -183,6 +185,7 @@ namespace Prj {
                             Utils.MsgInfo($"task '{task.Id}' in project '{ids[0]}' is done!");
                         else
                             Utils.MsgInfo($"task '{task.Id}' in project '{ids[0]}' needs more work!");
+                        project.LastChanged = DateTime.Now;
                         return;
                     }
                 }
@@ -209,10 +212,12 @@ namespace Prj {
             if (ids.Length == 2) {
                 if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
                     if (project.Logs.RemoveAll(t => t.Id == ids[1]) > 0) {
+                        project.LastChanged = DateTime.Now;
                         Utils.MsgInfo($"log '{ids[1]}' was successfully removed from project {ids[0]}.");
                         return;
                     }
                     else if (project.Tasks.RemoveAll(t => t.Id == ids[1]) > 0) {
+                        project.LastChanged = DateTime.Now;
                         Utils.MsgInfo($"task '{ids[1]}' was successfully removed from project {ids[0]}.");
                         return;
                     }
@@ -225,6 +230,100 @@ namespace Prj {
                 }
 
             }
+        }
+
+        // int? newId = ProjectStorage.FindVacantIdProject();
+        // if (newId == null) {
+        //     Utils.MsgErr("project limit has been reached");
+        //     return;
+        // }
+        //
+        //
+        private static void CmdEdit(string? idRaw) {
+            int[] ids = CmdArgParse(idRaw);
+
+            // project
+            if (ids.Length == 1) {
+                if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
+                    string oldContent = project.Title + "\n\n" + project.Descr;
+                    string? title = null, descr = null;
+                    string? edOutput = Utils.EditInEditor(oldContent);
+                    if (edOutput is string userContent) {
+                        // Excuse: I needed to use Regex here since the regular Split method had no
+                        // overload for keeping the split delimeters.
+                        foreach (string s in Regex.Split(userContent, @"(\r?\n)")) {
+                            if (title == null) {
+                                if (!s.IsWhiteSpace() && title == null)
+                                    title = s.Trim();
+                            }
+                            else {
+                                descr += s;
+                            }
+                        }
+                    }
+
+                    else if (edOutput == null || title == null) {
+                        Utils.MsgErr("failed to create project due to null editor output");
+                    }
+
+                    // Console.WriteLine($"new id: {newId}");
+                    if (descr != null)
+                        project.Descr = descr.Trim();
+                    if (title != null) {
+                        project.Title = title.Trim();
+                    }
+                    else {
+                        Utils.MsgInfo($"no new title was given - edit was cancelled");
+                    }
+                    project.LastChanged = DateTime.Now;
+                    Utils.MsgInfo($"project '{ids[0]}' was edited successfully");
+
+                }
+                else {
+                    Utils.MsgInfo($"project '{ids[0]}' could not be found");
+                }
+                return;
+            }
+
+            // task/log in project
+            if (ids.Length == 2) {
+                if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
+                    int listIndex;
+                    if ((listIndex = project.Tasks.FindIndex(t => t.Id == ids[1])) >= 0) {
+                        string? edOutput = Utils.EditInEditor(project.Tasks[listIndex].Text);
+                        if (edOutput is string userContent) {
+                            project.Tasks[listIndex].Text = userContent.Split('\n').First();
+                            project.LastChanged = DateTime.Now;
+                            Utils.MsgInfo($"task '{ids[1]}' in project '{ids[0]}' was edited successfully");
+                            return;
+                        }
+                        else if (edOutput == null) {
+                            Utils.MsgErr("failed to edit task due to null editor output");
+                            return;
+                        }
+                    }
+                    else if ((listIndex = project.Logs.FindIndex(t => t.Id == ids[1])) >= 0) {
+                        string? edOutput = Utils.EditInEditor(project.Logs[listIndex].Text);
+                        if (edOutput is string userContent) {
+                            project.Logs[listIndex].Text = userContent.Split('\n').First();
+                            project.LastChanged = DateTime.Now;
+                            Utils.MsgInfo($"log '{ids[1]}' in project '{ids[0]}' was edited successfully");
+                            return;
+                        }
+                        else if (edOutput == null) {
+                            Utils.MsgErr("failed to edit task due to null editor output");
+                            return;
+                        }
+
+                    }
+
+                }
+                else {
+                    Utils.MsgInfo($"project '{ids[0]}' could not be found.");
+                }
+
+            }
+
         }
 
         private static void CmdHelp(string? _) {
@@ -285,8 +384,7 @@ namespace Prj {
                     "flip", new("Flip task state -- ex. (task 5 in project 12): prj flip 12-5", "<id>", true, CmdFlip)
                 },
                 {
-                    // TODO: implement CmdEdit
-                    "edit", new("Edit a project, log or task -- ex. (task/log 1 in project 3): prj edit 3-1", "<id>", true, CmdNotImpl)
+                    "edit", new("Edit a project, log or task -- ex. (task/log 1 in project 3): prj edit 3-1", "<id>", true, CmdEdit)
                 },
                 {
                     "rm", new("Remove an item -- ex. (remove task 2 in project 1): prj rm 1-2", "<id>", true, CmdRemove)
