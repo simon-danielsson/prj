@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -x
+set -xe
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         dotnet publish -c Release -r linux-x64 --self-contained true \
