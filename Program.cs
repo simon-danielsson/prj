@@ -1,26 +1,8 @@
-﻿/*
-   Several projects and each project contains a list of tasks as well as free logs.
-
-    Project[] (title, body) [key: id]
-        Logs[] (title, body, date created)
-        Tasks[] (text, date created, date finished, finished boolean)
-
-  */
-
-namespace Prj {
+﻿namespace Prj {
     /// <summary>
     /// Entrypoint and argument handling.
     /// </summary>
     static class Program {
-
-        // static void Main() {
-        //     // editor integration
-        //     Console.WriteLine("Hello world!");
-        //     if (Utils.EditInEditor("This is some default file content") is string c)
-        //         Console.WriteLine(c);
-        //     else
-        //         return;
-        // }
 
         static void Main() {
             if (Console.WindowWidth < 120) {
@@ -32,6 +14,7 @@ namespace Prj {
 
             if (!ProjectStorage.LoadFromFile())
                 return;
+
             // ProjectStorage.DebugPopulateProjects();
             // ProjectStorage.SaveToFile();
             // return;
