@@ -74,13 +74,13 @@ namespace Prj.src {
                         string.Format("{0,-93}", "Tasks") + Color.Ansi("reset"));
 
                 if (row.Tasks.Count > 0) {
-                    foreach (var task in row.Tasks.OrderByDescending(t => t.Done).ThenBy(t => t.Date)) {
+                    foreach (var task in row.Tasks.OrderByDescending(t => t.Done).ThenBy(t => t.Created)) {
                         Console.Write(
                             string.Format($"[{task.Id}] "));
                         if (task.Done)
                             Console.Write(Color.Ansi("crossed"));
                         Console.Write(
-                            string.Format("{0,-71}{1,0}", Util.Concat(task.Text, 67), Util.TimeDisplay(task.Date)));
+                            string.Format("{0,-71}{1,0}", Util.Concat(task.Text, 67), Util.TimeDisplay(task.Created)));
                         Console.WriteLine(Color.Ansi("reset"));
                     }
                 }
@@ -148,7 +148,7 @@ namespace Prj.src {
                 string? text = null;
                 string? edOutput = Util.EditInEditor("");
                 if (edOutput is string userContent && newId is int id) {
-                    ProjectStorage.AddNewTask(ids[0], userContent.Split('\n').First(), id);
+                    project.Tasks.Add(new ProjectStorage.Item(userContent.Split('\n').First(), id));
                     Msg.Info($"new task '{id}' in project '{ids[0]}' was created successfully.");
                     project.LastChanged = DateTime.Now;
                 }
@@ -179,7 +179,7 @@ namespace Prj.src {
                 string? text = null;
                 string? edOutput = Util.EditInEditor("");
                 if (edOutput is string userContent && newId is int id) {
-                    ProjectStorage.AddNewLog(ids[0], userContent.Trim(), id);
+                    project.Logs.Add(new ProjectStorage.Item(userContent.Trim(), id));
                     Msg.Info($"new log '{id}' in project '{ids[0]}' was created successfully.");
                     project.LastChanged = DateTime.Now;
                 }
@@ -206,7 +206,7 @@ namespace Prj.src {
                     return;
                 }
 
-                foreach (ProjectStorage.Task task in project.Tasks) {
+                foreach (ProjectStorage.Item task in project.Tasks) {
                     if (task.Id == ids[1]) {
                         task.Done = !task.Done;
                         if (task.Done == true)

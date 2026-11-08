@@ -11,18 +11,6 @@ namespace Prj.src {
             Projects.Add(id, new Project(title, descr, [], [], DateTime.Now));
         }
 
-        /// <summary>It's the responsibility of the caller to check that the
-        /// supplied project index is valid</summary>
-        public static void AddNewTask(int project, string text, int id) {
-            Projects[project].Tasks.Add(new Task(text, DateTime.Now, false, id));
-        }
-
-        /// <summary>It's the responsibility of the caller to check that the
-        /// supplied project index is valid</summary>
-        public static void AddNewLog(int project, string text, int id) {
-            Projects[project].Logs.Add(new Log(text, DateTime.Now, id));
-        }
-
         public static int? FindVacantIdProject() {
             for (int i = 1; i < 999; i++) {
                 if (!Projects.ContainsKey(i))
@@ -45,15 +33,15 @@ namespace Prj.src {
             return null;
         }
 
-        public class Project(string title, string? descr, List<Task> tasks, List<Log> logs, DateTimeOffset? lastChanged) {
+        public class Project(string title, string? descr, List<Item> tasks, List<Item> logs, DateTimeOffset? lastChanged) {
             public string Title = title;
             public string? Descr = descr;
-            public List<Task> Tasks = tasks;
-            public List<Log> Logs = logs;
+            public List<Item> Tasks = tasks;
+            public List<Item> Logs = logs;
             public DateTimeOffset? LastChanged = lastChanged;
 
             public DateTimeOffset? DateCreated() {
-                var oldestTask = Tasks.MinBy(i => i.Date)?.Date;
+                var oldestTask = Tasks.MinBy(i => i.Created)?.Created;
                 var oldestLog = Logs.MinBy(i => i.Created)?.Created;
                 return (oldestTask, oldestLog) switch {
                     (null, null) => LastChanged,
@@ -73,16 +61,10 @@ namespace Prj.src {
             }
         }
 
-        public class Task(string text, DateTimeOffset date, bool done, int id) {
+        public class Item(string text, int id) {
             public string Text { get; set; } = text;
-            public DateTimeOffset Date { get; init; } = date;
-            public bool Done { get; set; } = done;
-            public int Id { get; init; } = id;
-        }
-
-        public class Log(string text, DateTimeOffset created, int id) {
-            public string Text { get; set; } = text;
-            public DateTimeOffset Created { get; init; } = created;
+            public bool Done { get; set; } = false;
+            public DateTimeOffset Created { get; init; } = DateTime.Now;
             public int Id { get; init; } = id;
         }
 
