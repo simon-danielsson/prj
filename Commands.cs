@@ -247,12 +247,12 @@ namespace Prj {
                 if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
                     if (project.Logs.RemoveAll(t => t.Id == ids[1]) > 0) {
                         project.LastChanged = DateTime.Now;
-                        Utils.MsgInfo($"log '{ids[1]}' was successfully removed from project {ids[0]}.");
+                        Utils.MsgInfo($"log '{ids[1]}' was successfully removed from project '{ids[0]}'.");
                         return;
                     }
                     else if (project.Tasks.RemoveAll(t => t.Id == ids[1]) > 0) {
                         project.LastChanged = DateTime.Now;
-                        Utils.MsgInfo($"task '{ids[1]}' was successfully removed from project {ids[0]}.");
+                        Utils.MsgInfo($"task '{ids[1]}' was successfully removed from project '{ids[0]}'.");
                         return;
                     }
                     else {
