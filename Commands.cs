@@ -70,7 +70,7 @@ namespace Prj {
         }
 
         // TODO: edit formatting of task/log lists to allow for larger bodies in project overview
-        private static void CmdShow(string? id_raw) {
+        private static void CmdView(string? id_raw) {
             int id = CmdArgParse(id_raw)[0];
 
             if (id >= 0 && ProjectStorage.Projects.TryGetValue(id, out var row)) {
@@ -82,46 +82,38 @@ namespace Prj {
 
                 Console.WriteLine();
 
-                if (row.Tasks.Length > 0) {
-                    Console.WriteLine(Utils.Color("underline") +
-                            string.Format("{0,-4}{1,-8}{2,-34}{3,-69}", "ID", "Done", "Created", "Text") + Utils.Color("reset"));
-
-                    // TODO: sort with most recent tasks at the bottom
-                    foreach (ProjectStorage.Task task in row.Tasks) {
-                        Console.Write(
-                            string.Format("{0,-4}", task.Id));
-
-                        if (task.Done)
-                            Console.Write(
-                                string.Format("{0,-8}", "X"));
-                        else
-                            Console.Write(
-                                string.Format("{0,-8}", "."));
-
-                        Console.WriteLine(
-                            string.Format("{0,-34}{1,0}", Utils.TimeDisplay(task.Date), task.Text));
-                    }
-                }
-                else {
-                    Console.WriteLine("No tasks were found!");
-                }
-
-                Console.WriteLine();
-                // Console.WriteLine(Utils.Color("bold") + "\nLOGS\n", Utils.Color("reset"));
-
+                Console.WriteLine(Utils.Color("underline") +
+                        string.Format("{0,-93}", "Logs") + Utils.Color("reset"));
                 if (row.Logs.Length > 0) {
-                    Console.WriteLine(Utils.Color("underline") +
-                            string.Format("{0,-12}{1,-34}{2,-69}", "ID", "Created", "Text") + Utils.Color("reset"));
-
                     // TODO: sort with most recent logs at the bottom
-                    foreach (ProjectStorage.Log log in row.Logs) {
+                    foreach (var log in row.Logs.OrderBy(t => t.Created)) {
+                        Console.WriteLine(Utils.Color("overline") +
+                            string.Format($"[{log.Id}] {Utils.TimeDisplay(log.Created)}") + Utils.Color("reset"));
                         Console.WriteLine(
-                            string.Format("{0,-12}{1,-34}{2,0}", log.Id, Utils.TimeDisplay(log.Created), log.Text));
+                            string.Format(log.Text));
 
                     }
                 }
                 else {
                     Console.WriteLine("No logs were found!");
+                }
+                Console.WriteLine();
+
+                Console.WriteLine(Utils.Color("underline") +
+                        string.Format("{0,-93}", "Tasks") + Utils.Color("reset"));
+                if (row.Tasks.Length > 0) {
+                    foreach (var task in row.Tasks.OrderByDescending(t => t.Done).ThenBy(t => t.Date)) {
+                        Console.Write(
+                            string.Format($"[{task.Id}] "));
+                        if (task.Done)
+                            Console.Write(Utils.Color("crossed"));
+                        Console.Write(
+                            string.Format($"{task.Text} ({Utils.TimeDisplay(task.Date)})"));
+                        Console.WriteLine(Utils.Color("reset"));
+                    }
+                }
+                else {
+                    Console.WriteLine("No tasks were found!");
                 }
 
             }
@@ -167,32 +159,36 @@ namespace Prj {
         /// </summary>
         static public Dictionary<string, CmdTableRow> CmdTable = new(){
                 {
-                    "help", new("Display help.", null, false, CmdHelp)
+                    "help", new("Display help", null, false, CmdHelp)
                 },
                 {
-                    "ls", new("List all projects.", null, false, CmdList)
+                    "ls", new("List all projects", null, false, CmdList)
                 },
                 {
-                    "show", new("Display project overview.", "<id>", true, CmdShow)
+                    "new", new("Create a new project", null, false, CmdNew)
                 },
                 {
-                    "new", new("Create a new project.", null, false, CmdNew)
-                },
-                {
-                    // TODO: implement CmdEdit
-                    "edit", new("Edit item by id. Example (task 1 of project 3): prj edit 3-1", "<id>", true, CmdNotImpl)
+                    "pr", new("Display a project overview", "<id>", true, CmdView)
                 },
                 {
                     // TODO: implement CmdTask
-                    "task", new("Create new task on project <id>. Example (new task on project 2): prj task 2", "<id>", true, CmdNotImpl)
+                    "task", new("Create new task in a project -- ex. (new task in project 2): prj task 2", "<id>", true, CmdNotImpl)
                 },
                 {
                     // TODO: implement CmdLog
-                    "log", new("Create new log on project <id>. Example (new log on project 8): prj log 8", "<id>", true, CmdNotImpl)
+                    "log", new("Write a new log in a project -- ex. (new log in project 8): prj log 8", "<id>", true, CmdNotImpl)
+                },
+                {
+                    // TODO: implement CmdFlip
+                    "flip", new("Flip task state -- ex. (task 5 in project 12): prj flip 12-5", "<id>", true, CmdNotImpl)
+                },
+                {
+                    // TODO: implement CmdEdit
+                    "edit", new("Edit a project, log or task -- ex. (task/log 1 in project 3): prj edit 3-1", "<id>", true, CmdNotImpl)
                 },
                 {
                     // TODO: implement CmdRemove
-                    "rm", new("Remove item by id. Example (remove task 2 of project 1): prj task 1-2", "<id>", true, CmdNotImpl)
+                    "rm", new("Remove an item -- ex. (remove task 2 in project 1): prj rm 1-2", "<id>", true, CmdNotImpl)
                 },
             };
 
