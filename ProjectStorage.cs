@@ -12,8 +12,15 @@ namespace Prj {
         }
 
         public static int? FindVacantIdProject() {
-            for (int i = 1; i < 99; i++) {
+            for (int i = 1; i < 999; i++) {
                 if (!Projects.ContainsKey(i))
+                    return i;
+            }
+            return null;
+        }
+        public static int? FindVacantIdTaskLog(Project project) {
+            for (int i = 1; i < 999; i++) {
+                if (project.Logs[i].Id != i && project.Tasks[i].Id != i)
                     return i;
             }
             return null;
