@@ -1,6 +1,11 @@
-prj - opinionated todo-list
-Built by Simon Danielsson
+prj - Opinionated todo-list application for the unix CLI.
+Simon Danielsson <contact@simondanielsson.se>
 https://github.com/simon-danielsson/prj
 
-Usage:
+USAGE:
+prj <command> [args]
 
+Most editing is done by calling an external text-editor. Set environment variable
+'$EDITOR' to your preferred editor (ex. neovim).
+
+COMMANDS:
