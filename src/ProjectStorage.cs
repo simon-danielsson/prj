@@ -54,6 +54,7 @@ namespace Prj.src {
             public int LogsTotal() => Logs.Count;
             public int TasksTotal() => Tasks.Count;
             public int TasksDone() => Tasks.Count(s => s.Done);
+
             public double CompletionPercent() {
                 if (TasksTotal() == 0)
                     return 0;

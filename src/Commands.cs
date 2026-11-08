@@ -130,7 +130,7 @@ namespace Prj.src {
             }
         }
 
-        private static void CmdTask(string? idRaw) {
+        private static void CmdTaskLogBackend(string? idRaw, bool isTask) {
             int[] ids = [];
             if (idRaw != null)
                 ids = CmdArgParse(idRaw);
@@ -148,48 +148,35 @@ namespace Prj.src {
                 string? text = null;
                 string? edOutput = Util.EditInEditor("");
                 if (edOutput is string userContent && newId is int id) {
-                    project.Tasks.Add(new ProjectStorage.Item(userContent.Split('\n').First(), id));
-                    Msg.Info($"new task '{id}' in project '{ids[0]}' was created successfully.");
+                    if (isTask) {
+                        project.Tasks.Add(new ProjectStorage.Item(userContent.Split('\n').First(), id));
+                        Msg.Info($"new task '{id}' in project '{ids[0]}' was created successfully.");
+                    }
+                    else {
+                        project.Logs.Add(new ProjectStorage.Item(userContent.Trim(), id));
+                        Msg.Info($"new log '{id}' in project '{ids[0]}' was created successfully.");
+                    }
                     project.LastChanged = DateTime.Now;
                 }
                 else if (edOutput == null || text == null) {
-                    Msg.Error("failed to create task due to null editor output.");
+                    if (isTask)
+                        Msg.Error("failed to create task due to null editor output.");
+                    else
+                        Msg.Error("failed to create log due to null editor output.");
                 }
             }
             else {
                 Msg.Error($"project '{ids[0]}' does not exist");
             }
+
+        }
+
+        private static void CmdTask(string? idRaw) {
+            CmdTaskLogBackend(idRaw, true);
         }
 
         private static void CmdLog(string? idRaw) {
-            int[] ids = [];
-            if (idRaw != null)
-                ids = CmdArgParse(idRaw);
-            else {
-                Msg.Error("no argument provided");
-                return;
-            }
-            if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
-                int? newId = ProjectStorage.FindVacantIdTaskLog(project);
-                if (newId == null) {
-                    Msg.Error($"task/log limit for project '{ids[0]}'has been reached");
-                    return;
-                }
-
-                string? text = null;
-                string? edOutput = Util.EditInEditor("");
-                if (edOutput is string userContent && newId is int id) {
-                    project.Logs.Add(new ProjectStorage.Item(userContent.Trim(), id));
-                    Msg.Info($"new log '{id}' in project '{ids[0]}' was created successfully.");
-                    project.LastChanged = DateTime.Now;
-                }
-                else if (edOutput == null || text == null) {
-                    Msg.Error("failed to create log due to null editor output.");
-                }
-            }
-            else {
-                Msg.Error($"project '{ids[0]}' does not exist");
-            }
+            CmdTaskLogBackend(idRaw, false);
         }
 
         private static void CmdFlip(string? idRaw) {
