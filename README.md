@@ -24,25 +24,30 @@
 
 ## Info
   
-No info section written yet.
+**prj** is essentially a project organizer where each project contains a description, todo-list
+as well as a list of freeform logs.
+  
+This application was built for the explicit purpose of learning/exploring the C# programming
+language.
   
 ### Requirements
-- .NET 10
+- .NET
 - Unix OS
+- A terminal-based text editor
   
 ---
 <div id="install"></div>
 
 ## Install
   
-No install section written yet.
+Simply clone this repo and compile on your own machine.
   
 ---
 <div id="usage"></div>
   
 ## Usage
    
-No install section written yet.
+No usage section written yet.
     
 ---
 <div id="license"></div>
