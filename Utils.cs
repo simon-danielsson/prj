@@ -16,6 +16,12 @@ namespace Prj {
             {"grey", "\x1B[38;2;95;95;99m"},
         };
 
+        public static string Concat(string str, int threshold) {
+            return str.Length <= threshold
+                ? str
+                : str[..threshold] + "...";
+        }
+
         public static string Color(string key) {
             Colors.TryGetValue(key, out string? c);
             return c

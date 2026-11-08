@@ -9,7 +9,12 @@ namespace Prj {
     /// Handling and execution of program commands (hit after Program.cs)
     /// </summary>
     static class Commands {
-        private static void CmdList(string? _) {
+        private static void CmdList(string? idRaw) {
+            if (idRaw is string id) {
+                CmdListProject(idRaw);
+                return;
+            }
+
             if (ProjectStorage.Projects.Count == 0) {
                 Console.WriteLine("No projects were found!");
                 return;
@@ -23,7 +28,7 @@ namespace Prj {
                 Console.WriteLine(
                     string.Format("{0,-4}{1,-34}{2, -16}{3,-21}{4,-4}",
                         p.Key,
-                        p.Value.TitleConcat(30),
+                        Utils.Concat(p.Value.Title, 30),
                         $"{p.Value.TasksDone()}/{p.Value.TasksTotal()} - {p.Value.CompletionPercent():F0}%",
                         Utils.TimeDisplay(p.Value.LastChanged),
                         Utils.TimeDisplay(p.Value.DateCreated())
@@ -31,8 +36,62 @@ namespace Prj {
             }
         }
 
-        private static void CmdNotImpl(string? _) {
-            Utils.MsgErr("this command is not implemented yet");
+        private static void CmdListProject(string? idRaw) {
+            int id = -1;
+            if (idRaw != null)
+                id = CmdArgParse(idRaw)[0];
+            else {
+                Utils.MsgErr("no argument provided");
+                return;
+            }
+
+            if (id >= 0 && ProjectStorage.Projects.TryGetValue(id, out var row)) {
+
+                Console.WriteLine(Utils.Color("bold") +
+                        $"{id} - {row.Title}" + Utils.Color("reset"));
+                if (row.Descr != null && row.Descr.Length > 0)
+                    Console.WriteLine(row.Descr);
+
+                Console.WriteLine();
+
+                Console.WriteLine(Utils.Color("underline") +
+                        string.Format("{0,-93}", "Logs") + Utils.Color("reset"));
+                if (row.Logs.Count > 0) {
+                    foreach (var log in row.Logs.OrderBy(t => t.Created)) {
+                        Console.WriteLine(Utils.Color("overline") +
+                            string.Format($"[{log.Id}] {Utils.TimeDisplay(log.Created)}") + Utils.Color("reset"));
+                        Console.WriteLine(
+                            string.Format(log.Text));
+
+                    }
+                }
+                else {
+                    Console.WriteLine("No logs were found!");
+                }
+                Console.WriteLine();
+
+                Console.WriteLine(Utils.Color("underline") +
+                        string.Format("{0,-93}", "Tasks") + Utils.Color("reset"));
+
+                if (row.Tasks.Count > 0) {
+                    foreach (var task in row.Tasks.OrderByDescending(t => t.Done).ThenBy(t => t.Date)) {
+                        Console.Write(
+                            string.Format($"[{task.Id}] "));
+                        if (task.Done)
+                            Console.Write(Utils.Color("crossed"));
+                        Console.Write(
+                            string.Format("{0,-71}{1,0}", Utils.Concat(task.Text, 67), Utils.TimeDisplay(task.Date)));
+                        Console.WriteLine(Utils.Color("reset"));
+                    }
+                }
+                else {
+                    Console.WriteLine("No tasks were found!");
+                }
+
+            }
+            else {
+                Utils.MsgErr($"project id '{id}' does not exist");
+            }
         }
 
         private static void CmdNew(string? _) {
@@ -71,59 +130,14 @@ namespace Prj {
             }
         }
 
-        private static void CmdView(string? id_raw) {
-            int id = CmdArgParse(id_raw)[0];
-
-            if (id >= 0 && ProjectStorage.Projects.TryGetValue(id, out var row)) {
-
-                Console.WriteLine(Utils.Color("bold") +
-                        $"{id} - {row.Title}" + Utils.Color("reset"));
-                if (row.Descr != null && row.Descr.Length > 0)
-                    Console.WriteLine(row.Descr);
-
-                Console.WriteLine();
-
-                Console.WriteLine(Utils.Color("underline") +
-                        string.Format("{0,-93}", "Logs") + Utils.Color("reset"));
-                if (row.Logs.Count > 0) {
-                    foreach (var log in row.Logs.OrderBy(t => t.Created)) {
-                        Console.WriteLine(Utils.Color("overline") +
-                            string.Format($"[{log.Id}] {Utils.TimeDisplay(log.Created)}") + Utils.Color("reset"));
-                        Console.WriteLine(
-                            string.Format(log.Text));
-
-                    }
-                }
-                else {
-                    Console.WriteLine("No logs were found!");
-                }
-                Console.WriteLine();
-
-                Console.WriteLine(Utils.Color("underline") +
-                        string.Format("{0,-93}", "Tasks") + Utils.Color("reset"));
-                if (row.Tasks.Count > 0) {
-                    foreach (var task in row.Tasks.OrderByDescending(t => t.Done).ThenBy(t => t.Date)) {
-                        Console.Write(
-                            string.Format($"[{task.Id}] "));
-                        if (task.Done)
-                            Console.Write(Utils.Color("crossed"));
-                        Console.Write(
-                            string.Format("{0,-71}{1,0}", task.Text, Utils.TimeDisplay(task.Date)));
-                        Console.WriteLine(Utils.Color("reset"));
-                    }
-                }
-                else {
-                    Console.WriteLine("No tasks were found!");
-                }
-
-            }
-            else {
-                Utils.MsgErr($"project id '{id}' does not exist");
-            }
-        }
-
         private static void CmdTask(string? idRaw) {
-            int[] ids = CmdArgParse(idRaw);
+            int[] ids = [];
+            if (idRaw != null)
+                ids = CmdArgParse(idRaw);
+            else {
+                Utils.MsgErr("no argument provided");
+                return;
+            }
             if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
                 int? newId = ProjectStorage.FindVacantIdTaskLog(project);
                 if (newId == null) {
@@ -148,7 +162,13 @@ namespace Prj {
         }
 
         private static void CmdLog(string? idRaw) {
-            int[] ids = CmdArgParse(idRaw);
+            int[] ids = [];
+            if (idRaw != null)
+                ids = CmdArgParse(idRaw);
+            else {
+                Utils.MsgErr("no argument provided");
+                return;
+            }
             if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
                 int? newId = ProjectStorage.FindVacantIdTaskLog(project);
                 if (newId == null) {
@@ -173,7 +193,13 @@ namespace Prj {
         }
 
         private static void CmdFlip(string? idRaw) {
-            int[] ids = CmdArgParse(idRaw);
+            int[] ids = [];
+            if (idRaw != null)
+                ids = CmdArgParse(idRaw);
+            else {
+                Utils.MsgErr("no argument provided");
+                return;
+            }
             if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
                 if (project.Tasks.Count == 0) {
                     Utils.MsgErr($"project {ids[0]} has no tasks");
@@ -199,7 +225,13 @@ namespace Prj {
         }
 
         private static void CmdRemove(string? idRaw) {
-            int[] ids = CmdArgParse(idRaw);
+            int[] ids = [];
+            if (idRaw != null)
+                ids = CmdArgParse(idRaw);
+            else {
+                Utils.MsgErr("no argument provided");
+                return;
+            }
 
             // project
             if (ids.Length == 1) {
@@ -234,15 +266,14 @@ namespace Prj {
             }
         }
 
-        // int? newId = ProjectStorage.FindVacantIdProject();
-        // if (newId == null) {
-        //     Utils.MsgErr("project limit has been reached");
-        //     return;
-        // }
-        //
-        //
         private static void CmdEdit(string? idRaw) {
-            int[] ids = CmdArgParse(idRaw);
+            int[] ids = [];
+            if (idRaw != null)
+                ids = CmdArgParse(idRaw);
+            else {
+                Utils.MsgErr("no argument provided");
+                return;
+            }
 
             // project
             if (ids.Length == 1) {
@@ -342,7 +373,7 @@ namespace Prj {
             }
         }
 
-        public record CmdTableRow(string Descr, string? Arg, bool HasArg, Action<string?> Function);
+        public record CmdTableRow(string Descr, string? Arg, Action<string?> Function);
 
         /// <summary>parse unknown arg string? like '1' and '2-3' into [1] and [2,3]</summary>
         static public int[] CmdArgParse(string? rawArg) {
@@ -365,31 +396,28 @@ namespace Prj {
         /// </summary>
         static public Dictionary<string, CmdTableRow> CmdTable = new(){
                 {
-                    "help", new("Display help", null, false, CmdHelp)
+                    "help", new("Display help", null, CmdHelp)
                 },
                 {
-                    "ls", new("List all projects", null, false, CmdList)
+                    "ls", new("List all projects", "[id]", CmdList)
                 },
                 {
-                    "new", new("Create a new project", null, false, CmdNew)
+                    "new", new("Create a new project", null, CmdNew)
                 },
                 {
-                    "pr", new("Display a project overview", "<id>", true, CmdView)
+                    "task", new("Create new task in a project -- ex. (new task in project 2): prj task 2", "<id>", CmdTask)
                 },
                 {
-                    "task", new("Create new task in a project -- ex. (new task in project 2): prj task 2", "<id>", true, CmdTask)
+                    "log", new("Write a new log in a project -- ex. (new log in project 8): prj log 8", "<id>", CmdLog)
                 },
                 {
-                    "log", new("Write a new log in a project -- ex. (new log in project 8): prj log 8", "<id>", true, CmdLog)
+                    "flip", new("Flip task state -- ex. (task 5 in project 12): prj flip 12-5", "<id>", CmdFlip)
                 },
                 {
-                    "flip", new("Flip task state -- ex. (task 5 in project 12): prj flip 12-5", "<id>", true, CmdFlip)
+                    "edit", new("Edit a project, log or task -- ex. (task/log 1 in project 3): prj edit 3-1", "<id>", CmdEdit)
                 },
                 {
-                    "edit", new("Edit a project, log or task -- ex. (task/log 1 in project 3): prj edit 3-1", "<id>", true, CmdEdit)
-                },
-                {
-                    "rm", new("Remove an item -- ex. (remove task 2 in project 1): prj rm 1-2", "<id>", true, CmdRemove)
+                    "rm", new("Remove an item -- ex. (remove task 2 in project 1): prj rm 1-2", "<id>", CmdRemove)
                 },
             };
 

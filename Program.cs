@@ -24,18 +24,12 @@
             while (a.ArgLeft()) {
                 if (a.Current() is string arg) {
                     if (Commands.CmdTable.TryGetValue(arg, out var row)) {
-                        if (!row.HasArg) {
-                            row.Function(null);
-                            break;
-                        }
-
                         if (a.Next() is string functionArg) {
                             row.Function(functionArg);
                             break;
                         }
-
                         else {
-                            Utils.MsgErr($"missing or malformed argument for command '{arg}'");
+                            row.Function(null);
                             break;
                         }
                     }

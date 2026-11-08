@@ -80,11 +80,6 @@ namespace Prj {
                 }
                 return "";
             }
-            public string TitleConcat(int threshold) {
-                return Title.Length <= threshold
-                    ? Title
-                    : Title[..threshold] + "...";
-            }
         }
 
         public class Task(string text, DateTimeOffset date, bool done, int id) {
