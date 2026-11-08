@@ -180,9 +180,9 @@ namespace Prj {
                     if (task.Id == ids[1]) {
                         task.Done = !task.Done;
                         if (task.Done == true)
-                            Utils.MsgInfo($"task '{task.Id}' is done!");
+                            Utils.MsgInfo($"task '{task.Id}' in project '{ids[0]}' is done!");
                         else
-                            Utils.MsgInfo($"task '{task.Id}' needs more work!");
+                            Utils.MsgInfo($"task '{task.Id}' in project '{ids[0]}' needs more work!");
                         return;
                     }
                 }
@@ -191,7 +191,40 @@ namespace Prj {
             else {
                 Utils.MsgErr($"project '{ids[0]}' does not exist");
             }
+        }
 
+        private static void CmdRemove(string? idRaw) {
+            int[] ids = CmdArgParse(idRaw);
+
+            // project
+            if (ids.Length == 1) {
+                if (ProjectStorage.Projects.Remove(ids[0]))
+                    Utils.MsgInfo($"project '{ids[0]}' was successfully removed.");
+                else
+                    Utils.MsgInfo($"project '{ids[0]}' could not be found.");
+                return;
+            }
+
+            // task/log in project
+            if (ids.Length == 2) {
+                if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
+                    if (project.Logs.RemoveAll(t => t.Id == ids[1]) > 0) {
+                        Utils.MsgInfo($"log '{ids[1]}' was successfully removed from project {ids[0]}.");
+                        return;
+                    }
+                    else if (project.Tasks.RemoveAll(t => t.Id == ids[1]) > 0) {
+                        Utils.MsgInfo($"task '{ids[1]}' was successfully removed from project {ids[0]}.");
+                        return;
+                    }
+                    else {
+                        Utils.MsgInfo($"a task or log with id '{ids[0]}' could not be found.");
+                    }
+                }
+                else {
+                    Utils.MsgInfo($"project '{ids[0]}' could not be found.");
+                }
+
+            }
         }
 
         private static void CmdHelp(string? _) {
@@ -256,8 +289,7 @@ namespace Prj {
                     "edit", new("Edit a project, log or task -- ex. (task/log 1 in project 3): prj edit 3-1", "<id>", true, CmdNotImpl)
                 },
                 {
-                    // TODO: implement CmdRemove
-                    "rm", new("Remove an item -- ex. (remove task 2 in project 1): prj rm 1-2", "<id>", true, CmdNotImpl)
+                    "rm", new("Remove an item -- ex. (remove task 2 in project 1): prj rm 1-2", "<id>", true, CmdRemove)
                 },
             };
 
