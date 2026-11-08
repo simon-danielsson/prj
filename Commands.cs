@@ -1,6 +1,8 @@
 using System.Text.RegularExpressions;
 #pragma warning disable SYSLIB1045
 
+// TODO: there is currently quite a lot of messy and duplicate code in this document. It's going to require substantial refactoring.
+
 namespace Prj {
 
     /// <summary>
