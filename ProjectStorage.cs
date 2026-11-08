@@ -17,6 +17,12 @@ namespace Prj {
             Projects[project].Tasks.Add(new Task(text, DateTime.Now, false, id));
         }
 
+        /// <summary>It's the responsibility of the caller to check that the
+        /// supplied project index is valid</summary>
+        public static void AddNewLog(int project, string text, int id) {
+            Projects[project].Logs.Add(new Log(text, DateTime.Now, id));
+        }
+
         public static int? FindVacantIdProject() {
             for (int i = 1; i < 999; i++) {
                 if (!Projects.ContainsKey(i))
@@ -84,7 +90,7 @@ namespace Prj {
         public class Task(string text, DateTimeOffset date, bool done, int id) {
             public string Text { get; init; } = text;
             public DateTimeOffset Date { get; init; } = date;
-            public bool Done { get; init; } = done;
+            public bool Done { get; set; } = done;
             public int Id { get; init; } = id;
 
             public string TextConcat(int threshold) {
@@ -97,8 +103,7 @@ namespace Prj {
             }
         }
 
-        public class Log(string title, string text, DateTimeOffset created, int id) {
-            public string Title { get; init; } = title;
+        public class Log(string text, DateTimeOffset created, int id) {
             public string Text { get; init; } = text;
             public DateTimeOffset Created { get; init; } = created;
             public int Id { get; init; } = id;
@@ -165,11 +170,11 @@ namespace Prj {
                     new("Write copy for About page",  new(2026, 11, 01, 8, 45, 0, TimeSpan.FromHours(1)), false, 3),
                 ],
                 [
-                    new("Kickoff meeting",    "Agreed on scope: 5 pages, no CMS for now.",
+                    new(    "Agreed on scope: 5 pages, no CMS for now.",
                     new(2026, 10, 05, 10, 0, 0, TimeSpan.FromHours(1)), 4),
-                    new("Wireframes approved","Client signed off on version 3.",
+                    new("Client signed off on version 3.",
                     new(2026, 10, 12, 16, 20, 0, TimeSpan.FromHours(1)), 5),
-                    new("Palette debate",     "Went with teal accents instead of orange. Jury is out.",
+                    new("Went with teal accents instead of orange. Jury is out.",
                     new(2026, 10, 18, 13, 5, 0, TimeSpan.FromHours(1)), 6),
                 ],
                 new(2026, 10, 18, 13, 5, 0, TimeSpan.FromHours(1)));
@@ -186,9 +191,9 @@ namespace Prj {
                     new(2026, 10, 02, 17, 40, 0, TimeSpan.FromHours(2)), false, 2),
                 ],
                 [
-                    new("First flash success", "Blink LED on boot. It lives!",
+                    new("Blink LED on boot. It lives!",
                     new(2026, 09, 14, 19, 55, 0, TimeSpan.FromHours(2)), 3),
-                    new("Range readings noisy", "±15cm jitter; adding a median filter next.",
+                    new("Range readings noisy",
                     new(2026, 09, 16, 20, 30, 0, TimeSpan.FromHours(2)), 4),
                 ],
                 new(2026, 09, 16, 20, 30, 0, TimeSpan.FromHours(2)));
@@ -203,7 +208,7 @@ namespace Prj {
                     new(2026, 10, 26, 7, 30, 0, TimeSpan.FromHours(1)), false, 1),
                 ],
                 [
-                    new("Recipes moved to notebook", "Keeping logs here minimal.",
+                    new("Recipes moved to notebook" ,
                     new(2026, 10, 19, 8, 0, 0, TimeSpan.FromHours(1)), 2),
                 ],
                 new(2026, 10, 26, 8, 15, 0, TimeSpan.FromHours(1)));

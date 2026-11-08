@@ -144,6 +144,56 @@ namespace Prj {
             }
         }
 
+        private static void CmdLog(string? idRaw) {
+            int[] ids = CmdArgParse(idRaw);
+            if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
+                int? newId = ProjectStorage.FindVacantIdTaskLog(project);
+                if (newId == null) {
+                    Utils.MsgErr($"task/log limit for project '{ids[0]}'has been reached");
+                    return;
+                }
+
+                string? text = null;
+                string? edOutput = Utils.EditInEditor("");
+                if (edOutput is string userContent && newId is int id) {
+                    ProjectStorage.AddNewLog(ids[0], userContent.Trim(), id);
+                    Utils.MsgInfo($"new log '{id}' in project '{ids[0]}' was created successfully.");
+                }
+                else if (edOutput == null || text == null) {
+                    Utils.MsgErr("failed to create log due to null editor output.");
+                }
+            }
+            else {
+                Utils.MsgErr($"project '{ids[0]}' does not exist");
+            }
+        }
+
+        private static void CmdFlip(string? idRaw) {
+            int[] ids = CmdArgParse(idRaw);
+            if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
+                if (project.Tasks.Count == 0) {
+                    Utils.MsgErr($"project {ids[0]} has no tasks");
+                    return;
+                }
+
+                foreach (ProjectStorage.Task task in project.Tasks) {
+                    if (task.Id == ids[1]) {
+                        task.Done = !task.Done;
+                        if (task.Done == true)
+                            Utils.MsgInfo($"task '{task.Id}' is done!");
+                        else
+                            Utils.MsgInfo($"task '{task.Id}' needs more work!");
+                        return;
+                    }
+                }
+                Utils.MsgErr($"task '{ids[1]}' does not exist");
+            }
+            else {
+                Utils.MsgErr($"project '{ids[0]}' does not exist");
+            }
+
+        }
+
         private static void CmdHelp(string? _) {
             string helpTxt = Utils.GetEmbeddedContent("help.txt");
             Console.Write($"{helpTxt}");
@@ -196,12 +246,10 @@ namespace Prj {
                     "task", new("Create new task in a project -- ex. (new task in project 2): prj task 2", "<id>", true, CmdTask)
                 },
                 {
-                    // TODO: implement CmdLog
-                    "log", new("Write a new log in a project -- ex. (new log in project 8): prj log 8", "<id>", true, CmdNotImpl)
+                    "log", new("Write a new log in a project -- ex. (new log in project 8): prj log 8", "<id>", true, CmdLog)
                 },
                 {
-                    // TODO: implement CmdFlip
-                    "flip", new("Flip task state -- ex. (task 5 in project 12): prj flip 12-5", "<id>", true, CmdNotImpl)
+                    "flip", new("Flip task state -- ex. (task 5 in project 12): prj flip 12-5", "<id>", true, CmdFlip)
                 },
                 {
                     // TODO: implement CmdEdit
