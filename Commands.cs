@@ -396,13 +396,13 @@ namespace Prj {
         /// </summary>
         static public Dictionary<string, CmdTableRow> CmdTable = new(){
                 {
-                    "help", new("Display help", null, CmdHelp)
+                    "help", new("Display information and available commands.", null, CmdHelp)
                 },
                 {
-                    "ls", new("List all projects", "[id]", CmdList)
+                    "new", new("Create a new project.", null, CmdNew)
                 },
                 {
-                    "new", new("Create a new project", null, CmdNew)
+                    "ls", new("List all projects or display a project overview using an id.", "[id]", CmdList)
                 },
                 {
                     "task", new("Create new task in a project -- ex. (new task in project 2): prj task 2", "<id>", CmdTask)

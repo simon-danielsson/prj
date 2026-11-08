@@ -34,7 +34,7 @@
                         }
                     }
                     else {
-                        Utils.MsgErr($"illegal command '{arg}'");
+                        Utils.MsgErr($"illegal command '{arg}' - use command 'help' if you're feeling lost.");
                         break;
                     }
                 }
