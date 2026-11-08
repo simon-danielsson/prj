@@ -325,7 +325,7 @@ namespace Prj.src {
                     else if ((listIndex = project.Logs.FindIndex(t => t.Id == ids[1])) >= 0) {
                         string? edOutput = Util.EditInEditor(project.Logs[listIndex].Text);
                         if (edOutput is string userContent) {
-                            project.Logs[listIndex].Text = userContent.Split('\n').First();
+                            project.Logs[listIndex].Text = userContent.Trim();
                             project.LastChanged = DateTime.Now;
                             Msg.Info($"log '{ids[1]}' in project '{ids[0]}' was edited successfully");
                             return;
