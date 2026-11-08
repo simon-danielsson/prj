@@ -11,6 +11,12 @@ namespace Prj {
             Projects.Add(id, new Project(title, descr, [], [], DateTime.Now));
         }
 
+        /// <summary>It's the responsibility of the caller to check that the
+        /// supplied project index is valid</summary>
+        public static void AddNewTask(int project, string text, int id) {
+            Projects[project].Tasks.Add(new Task(text, DateTime.Now, false, id));
+        }
+
         public static int? FindVacantIdProject() {
             for (int i = 1; i < 999; i++) {
                 if (!Projects.ContainsKey(i))
@@ -18,19 +24,26 @@ namespace Prj {
             }
             return null;
         }
+
         public static int? FindVacantIdTaskLog(Project project) {
+            var usedIds = new HashSet<int>();
+            foreach (var log in project.Logs)
+                usedIds.Add(log.Id);
+            foreach (var task in project.Tasks)
+                usedIds.Add(task.Id);
+
             for (int i = 1; i < 999; i++) {
-                if (project.Logs[i].Id != i && project.Tasks[i].Id != i)
+                if (!usedIds.Contains(i))
                     return i;
             }
             return null;
         }
 
-        public class Project(string title, string? descr, Task[] tasks, Log[] logs, DateTimeOffset? lastChanged) {
+        public class Project(string title, string? descr, List<Task> tasks, List<Log> logs, DateTimeOffset? lastChanged) {
             public string Title = title;
             public string? Descr = descr;
-            public Task[] Tasks = tasks;
-            public Log[] Logs = logs;
+            public List<Task> Tasks = tasks;
+            public List<Log> Logs = logs;
             public DateTimeOffset? LastChanged = lastChanged;
 
             public DateTimeOffset? DateCreated() {
@@ -44,8 +57,8 @@ namespace Prj {
                 };
             }
 
-            public int LogsTotal() => Logs.Length;
-            public int TasksTotal() => Tasks.Length;
+            public int LogsTotal() => Logs.Count;
+            public int TasksTotal() => Tasks.Count;
             public int TasksDone() => Tasks.Count(s => s.Done);
             public double CompletionPercent() {
                 if (TasksTotal() == 0)

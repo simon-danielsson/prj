@@ -69,7 +69,6 @@ namespace Prj {
             }
         }
 
-        // TODO: edit formatting of task/log lists to allow for larger bodies in project overview
         private static void CmdView(string? id_raw) {
             int id = CmdArgParse(id_raw)[0];
 
@@ -84,8 +83,7 @@ namespace Prj {
 
                 Console.WriteLine(Utils.Color("underline") +
                         string.Format("{0,-93}", "Logs") + Utils.Color("reset"));
-                if (row.Logs.Length > 0) {
-                    // TODO: sort with most recent logs at the bottom
+                if (row.Logs.Count > 0) {
                     foreach (var log in row.Logs.OrderBy(t => t.Created)) {
                         Console.WriteLine(Utils.Color("overline") +
                             string.Format($"[{log.Id}] {Utils.TimeDisplay(log.Created)}") + Utils.Color("reset"));
@@ -101,14 +99,14 @@ namespace Prj {
 
                 Console.WriteLine(Utils.Color("underline") +
                         string.Format("{0,-93}", "Tasks") + Utils.Color("reset"));
-                if (row.Tasks.Length > 0) {
+                if (row.Tasks.Count > 0) {
                     foreach (var task in row.Tasks.OrderByDescending(t => t.Done).ThenBy(t => t.Date)) {
                         Console.Write(
                             string.Format($"[{task.Id}] "));
                         if (task.Done)
                             Console.Write(Utils.Color("crossed"));
                         Console.Write(
-                            string.Format($"{task.Text} ({Utils.TimeDisplay(task.Date)})"));
+                            string.Format("{0,-71}{1,0}", task.Text, Utils.TimeDisplay(task.Date)));
                         Console.WriteLine(Utils.Color("reset"));
                     }
                 }
@@ -119,6 +117,30 @@ namespace Prj {
             }
             else {
                 Utils.MsgErr($"project id '{id}' does not exist");
+            }
+        }
+
+        private static void CmdTask(string? idRaw) {
+            int[] ids = CmdArgParse(idRaw);
+            if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
+                int? newId = ProjectStorage.FindVacantIdTaskLog(project);
+                if (newId == null) {
+                    Utils.MsgErr($"task/log limit for project '{ids[0]}'has been reached");
+                    return;
+                }
+
+                string? text = null;
+                string? edOutput = Utils.EditInEditor("");
+                if (edOutput is string userContent && newId is int id) {
+                    ProjectStorage.AddNewTask(ids[0], userContent.Split('\n').First(), id);
+                    Utils.MsgInfo($"new task '{id}' in project '{ids[0]}' was created successfully.");
+                }
+                else if (edOutput == null || text == null) {
+                    Utils.MsgErr("failed to create task due to null editor output.");
+                }
+            }
+            else {
+                Utils.MsgErr($"project '{ids[0]}' does not exist");
             }
         }
 
@@ -139,8 +161,8 @@ namespace Prj {
         public record CmdTableRow(string Descr, string? Arg, bool HasArg, Action<string?> Function);
 
         /// <summary>parse unknown arg string? like '1' and '2-3' into [1] and [2,3]</summary>
-        static public int[] CmdArgParse(string? raw_arg) {
-            if (raw_arg is string arg) {
+        static public int[] CmdArgParse(string? rawArg) {
+            if (rawArg is string arg) {
                 if (arg.Contains('-')) {
                     return [.. arg.Split('-').Select(int.Parse)];
                 }
@@ -171,8 +193,7 @@ namespace Prj {
                     "pr", new("Display a project overview", "<id>", true, CmdView)
                 },
                 {
-                    // TODO: implement CmdTask
-                    "task", new("Create new task in a project -- ex. (new task in project 2): prj task 2", "<id>", true, CmdNotImpl)
+                    "task", new("Create new task in a project -- ex. (new task in project 2): prj task 2", "<id>", true, CmdTask)
                 },
                 {
                     // TODO: implement CmdLog
