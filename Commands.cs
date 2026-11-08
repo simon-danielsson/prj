@@ -3,7 +3,7 @@ namespace Prj {
     /// Handling and execution of program commands (hit after Program.cs)
     /// </summary>
     static class Commands {
-        private static void CmdList(int _) {
+        private static void CmdList(string? _) {
             if (ProjectStorage.Projects.Count == 0) {
                 Console.WriteLine("No projects were found!");
                 return;
@@ -27,12 +27,13 @@ namespace Prj {
             }
         }
 
-        private static void CmdNotImpl(int _) {
+        private static void CmdNotImpl(string? _) {
             Utils.MsgErr("this command is not implemented yet");
         }
 
         // TODO: edit formatting of task/log lists to allow for larger bodies in project overview
-        private static void CmdShow(int id) {
+        private static void CmdShow(string? id_raw) {
+            int id = CmdArgParse(id_raw)[0];
             if (id >= 0 && ProjectStorage.Projects.TryGetValue(id, out var row)) {
 
                 Console.WriteLine(Utils.Color("bold") +
@@ -90,7 +91,7 @@ namespace Prj {
             }
         }
 
-        private static void CmdHelp(int _) {
+        private static void CmdHelp(string? _) {
             string helpTxt = Utils.GetEmbeddedContent("help.txt");
             Console.Write($"{helpTxt}");
 
@@ -104,7 +105,22 @@ namespace Prj {
             }
         }
 
-        public record CmdTableRow(string Descr, string? Arg, bool HasArg, Action<int> Function);
+        public record CmdTableRow(string Descr, string? Arg, bool HasArg, Action<string?> Function);
+
+        /// <summary>parse unknown arg string? like '1' and '2-3' into [1] and [2,3]</summary>
+        static public int[] CmdArgParse(string? raw_arg) {
+            if (raw_arg is string arg) {
+                if (arg.Contains('-')) {
+                    return [.. arg.Split('-').Select(int.Parse)];
+                }
+                else {
+                    return [Convert.ToInt32(arg)];
+                }
+            }
+            else {
+                return [];
+            }
+        }
 
         /// <summary>
         /// Dict. containing program commands with respective names,

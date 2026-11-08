@@ -42,13 +42,15 @@ namespace Prj {
                 if (a.Current() is string arg) {
                     if (Commands.CmdTable.TryGetValue(arg, out var row)) {
                         if (!row.HasArg) {
-                            row.Function(-1);
+                            row.Function(null);
                             break;
                         }
-                        if (int.TryParse(a.Next(), out var functionArg)) {
+
+                        if (a.Next() is string functionArg) {
                             row.Function(functionArg);
                             break;
                         }
+
                         else {
                             Utils.MsgErr($"missing or malformed argument for command '{arg}'");
                             break;
