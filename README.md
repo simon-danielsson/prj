@@ -9,7 +9,7 @@
 <p align="center">
     <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="MIT License" />
   <img src="https://img.shields.io/github/last-commit/simon-danielsson/prj/main?style=flat-square&color=blue" alt="Last commit" />
-  <img alt="Static Badge" src="https://img.shields.io/badge/-10-%23512BD4?style=flat-square&logo=dotnet&logoColor=white" />
+  <img alt=".net" src="https://img.shields.io/badge/NET-10-%23512BD4?style=flat-square&logo=dotnet&logoColor=white" />
 </p>
   
 <p align="center">
