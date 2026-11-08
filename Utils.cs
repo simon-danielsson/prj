@@ -12,6 +12,8 @@ namespace Prj {
             {"reset", "\x1b[0m"},
             {"bold", "\x1b[1m"},
             {"underline", "\x1b[4;1m"},
+            {"overline", "\x1b[53;1m"},
+            {"crossed", "\x1b[9;1m"},
             {"grey", "\x1B[38;2;95;95;99m"},
         };
 
