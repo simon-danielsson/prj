@@ -3,10 +3,10 @@ Simon Danielsson <contact@simondanielsson.se>
 https://github.com/simon-danielsson/prj
 
 USAGE:
-prj <command> [args]
+prj <command> [id]
 
 * Most editing is done by calling an external text-editor. Set environment variable
-  '$EDITOR' to your preferred editor (ex. neovim).
+  '$EDITOR' to your preferred editor (neovim, for example).
 * Perpetual storage found at '$HOME/.prj.storage'.
 
 COMMANDS:
