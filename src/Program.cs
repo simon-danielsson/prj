@@ -15,6 +15,11 @@
 
             var a = new Args();
 
+            if (!a.ArgLeft()) {
+                Msg.Error($"no command was provided - use command 'help' if you're feeling lost.");
+                return;
+            }
+
             while (a.ArgLeft()) {
                 if (a.Current() is string arg) {
                     if (Commands.CmdTable.TryGetValue(arg, out var row)) {
