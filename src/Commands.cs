@@ -169,7 +169,13 @@ namespace Prj.src {
         }
 
         private static List<int>? ParseArgsToInt(List<string>? rawIds) {
-            return rawIds?.Select(id => Convert.ToInt32(id)).ToList();
+            try {
+                return rawIds?.Select(id => Convert.ToInt32(id)).ToList();
+            }
+            catch {
+                Msg.Error($"missing or malformed arguments");
+                return null;
+            }
         }
 
         private static void CmdFlip(List<string>? rawIds) {
@@ -351,13 +357,13 @@ namespace Prj.src {
                     "log", new("Write a new log in a project -- ex. (new log in project 8): prj log 8", ["<id>"], CmdLog)
                 },
                 {
-                    "flip", new("Flip task state -- ex. (task 5 in project 12): prj flip 12-5", ["<id>"], CmdFlip)
+                    "flip", new("Flip task state -- ex. (task 5 in project 12): prj flip 12 5", ["<id>"], CmdFlip)
                 },
                 {
-                    "edit", new("Edit a project, log or task -- ex. (task/log 1 in project 3): prj edit 3-1", ["<id>"], CmdEdit)
+                    "edit", new("Edit a project, log or task -- ex. (task/log 1 in project 3): prj edit 3 1", ["<id>"], CmdEdit)
                 },
                 {
-                    "rm", new("Remove an item -- ex. (remove task 2 in project 1): prj rm 1-2", ["<id>"], CmdRemove)
+                    "rm", new("Remove an item -- ex. (remove task 2 in project 1): prj rm 1 2", ["<id>"], CmdRemove)
                 },
             };
 
