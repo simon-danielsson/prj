@@ -28,62 +28,32 @@ namespace Prj.src {
             }
 
             Msg.Info("ordered by 'Last changed' ascending.\n");
-            Console.WriteLine(Color.Ansi("underline") +
-                    string.Format("{0,-4}{1, -34}{2,-16}{3, -21}{4,-18}", "ID", "Title", "Completion", "Last changed", "Created") + Color.Ansi("reset"));
 
-            foreach (var p in ProjectStorage.Projects.OrderBy(kvp => kvp.Value.LastChanged)) {
-                Console.WriteLine(
-                    string.Format("{0,-4}{1,-34}{2, -16}{3,-21}{4,-4}",
-                        p.Key,
-                        Util.Concat(p.Value.Title, 30),
-                        $"{p.Value.TasksDone()}/{p.Value.TasksTotal()} - {p.Value.CompletionPercent():F0}%",
-                        Util.TimeDisplay(p.Value.LastChanged),
-                        Util.TimeDisplay(p.Value.DateCreated())
-                        ));
-            }
+            Draw.OverviewHeader();
+
+            foreach (var p in ProjectStorage.Projects.OrderBy(kvp => kvp.Value.LastChanged))
+                Draw.OverviewProject(p);
         }
 
         private static void CmdListProject(int id) {
             if (id >= 0 && ProjectStorage.Projects.TryGetValue(id, out var row)) {
 
-                Console.WriteLine(Color.Ansi("inverted") +
-                        string.Format("{0,-93}", $"{id}: " + row.Title) + Color.Ansi("reset"));
-                if (row.Descr != null && row.Descr.Length > 0)
-                    Console.WriteLine(row.Descr);
+                Draw.ProjectHeader(row, id);
+                Draw.LogHeader();
 
-                Console.WriteLine();
-
-                Console.WriteLine(Color.Ansi("underline") +
-                        string.Format("{0,-93}", "Logs") + Color.Ansi("reset"));
                 if (row.Logs.Count > 0) {
-                    foreach (var log in row.Logs.OrderBy(t => t.Created)) {
-                        Console.Write(Color.Ansi("bold"));
-                        string line = new('-', 71);
-                        Console.Write(
-                            string.Format("{0,-3}{1,0}{2,4}", log.Id, line, " " + Util.TimeDisplay(log.Created)));
-                        Console.Write(Color.Ansi("reset"));
-                        Console.WriteLine("\n" +
-                            string.Format(log.Text));
-
-                    }
+                    foreach (var log in row.Logs.OrderBy(t => t.Created))
+                        Draw.Log(log);
                 } else {
                     Console.WriteLine("No logs were found!");
                 }
                 Console.WriteLine();
 
-                Console.WriteLine(Color.Ansi("underline") +
-                        string.Format("{0,-93}", "Tasks") + Color.Ansi("reset"));
+                Draw.TaskHeader();
 
                 if (row.Tasks.Count > 0) {
-                    foreach (var task in row.Tasks.OrderByDescending(t => t.Done).ThenBy(t => t.Created)) {
-                        Console.Write(
-                            string.Format("{0,-3}{1,-2}", task.Id, "│"));
-                        if (task.Done)
-                            Console.Write(Color.Ansi("crossed"));
-                        Console.Write(string.Format("{0,-69}", Util.Concat(task.Text, 65)));
-                        Console.Write(Color.Ansi("reset"));
-                        Console.WriteLine(" " + Util.TimeDisplay(task.Created));
-                    }
+                    foreach (var task in row.Tasks.OrderByDescending(t => t.Done).ThenBy(t => t.Created))
+                        Draw.Task(task);
                 } else {
                     Console.WriteLine("No tasks were found!");
                 }
