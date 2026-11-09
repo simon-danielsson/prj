@@ -45,8 +45,8 @@ namespace Prj.src {
 
             if (id >= 0 && ProjectStorage.Projects.TryGetValue(id, out var row)) {
 
-                Console.WriteLine(Color.Ansi("underline") +
-                        $"{row.Title}" + Color.Ansi("reset"));
+                Console.WriteLine(Color.Ansi("inverted") +
+                        string.Format("{0,-93}", $"{id}: " + row.Title) + Color.Ansi("reset"));
                 if (row.Descr != null && row.Descr.Length > 0)
                     Console.WriteLine(row.Descr);
 
