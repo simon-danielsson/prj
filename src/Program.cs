@@ -21,13 +21,11 @@
                         if (a.Next() is string functionArg) {
                             row.Function(functionArg);
                             break;
-                        }
-                        else {
+                        } else {
                             row.Function(null);
                             break;
                         }
-                    }
-                    else {
+                    } else {
                         Msg.Error($"illegal command '{arg}' - use command 'help' if you're feeling lost.");
                         break;
                     }

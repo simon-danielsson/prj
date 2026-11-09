@@ -87,8 +87,7 @@ namespace Prj.src {
             if (path == null) {
                 Console.Error.WriteLine("Error: failed to get storage path");
                 return false;
-            }
-            else {
+            } else {
                 if (!File.Exists(path)) {
                     if (!Util.InitStorage())
                         return false;
