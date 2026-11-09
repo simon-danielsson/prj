@@ -236,7 +236,7 @@ namespace Prj.src {
                         Msg.Info($"task {ids[1]} was successfully removed from project {ids[0]}.");
                         return;
                     } else {
-                        Msg.Info($"a task or log with id {ids[0]} could not be found.");
+                        Msg.Info($"a task or log with id {ids[1]} could not be found.");
                     }
                 } else {
                     Msg.Info($"project {ids[0]} could not be found.");
