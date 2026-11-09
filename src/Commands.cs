@@ -15,13 +15,15 @@ namespace Prj.src {
             if (ids == null)
                 return;
 
-            if (ids.Count == 1 && ids[0] is int id) {
-                CmdListProject(id);
+            if (ProjectStorage.Projects.Count == 0) {
+                Console.WriteLine("No projects were found!");
                 return;
             }
 
-            if (ProjectStorage.Projects.Count == 0) {
-                Console.WriteLine("No projects were found!");
+            Console.Clear();
+
+            if (ids.Count == 1 && ids[0] is int id) {
+                CmdListProject(id);
                 return;
             }
 
@@ -42,7 +44,6 @@ namespace Prj.src {
         }
 
         private static void CmdListProject(int id) {
-
             if (id >= 0 && ProjectStorage.Projects.TryGetValue(id, out var row)) {
 
                 Console.WriteLine(Color.Ansi("inverted") +
