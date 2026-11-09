@@ -56,9 +56,12 @@ namespace Prj.src {
                         string.Format("{0,-93}", "Logs") + Color.Ansi("reset"));
                 if (row.Logs.Count > 0) {
                     foreach (var log in row.Logs.OrderBy(t => t.Created)) {
-                        Console.WriteLine(Color.Ansi("bold") +
-                            string.Format($"[{log.Id}] {Util.TimeDisplay(log.Created)}") + Color.Ansi("reset"));
-                        Console.WriteLine(
+                        Console.Write(Color.Ansi("bold"));
+                        string line = new('-', 71);
+                        Console.Write(
+                            string.Format("{0,-3}{1,0}{2,4}", log.Id, line, " " + Util.TimeDisplay(log.Created)));
+                        Console.Write(Color.Ansi("reset"));
+                        Console.WriteLine("\n" +
                             string.Format(log.Text));
 
                     }
@@ -73,12 +76,12 @@ namespace Prj.src {
                 if (row.Tasks.Count > 0) {
                     foreach (var task in row.Tasks.OrderByDescending(t => t.Done).ThenBy(t => t.Created)) {
                         Console.Write(
-                            string.Format($"[{task.Id}] "));
+                            string.Format("{0,-3}{1,-2}", task.Id, "│"));
                         if (task.Done)
                             Console.Write(Color.Ansi("crossed"));
-                        Console.Write(
-                            string.Format("{0,-71}{1,0}", Util.Concat(task.Text, 67), Util.TimeDisplay(task.Created)));
-                        Console.WriteLine(Color.Ansi("reset"));
+                        Console.Write(string.Format("{0,-69}", Util.Concat(task.Text, 65)));
+                        Console.Write(Color.Ansi("reset"));
+                        Console.WriteLine(" " + Util.TimeDisplay(task.Created));
                     }
                 } else {
                     Console.WriteLine("No tasks were found!");
