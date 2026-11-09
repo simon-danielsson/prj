@@ -8,11 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="embedded/help.txt" />
+        <EmbeddedResource Include="static/help.txt" />
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="embedded/editorNewProject.txt" />
+        <EmbeddedResource Include="static/editorNewProject.txt" />
     </ItemGroup>
 
     <PropertyGroup>
