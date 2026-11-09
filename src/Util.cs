@@ -20,6 +20,12 @@ namespace Prj.src {
     /// </summary>
     static class Util {
 
+        public static string UserInput(string? prompt) {
+            Console.WriteLine(prompt ?? "");
+            Console.Write("=> ");
+            return Console.ReadLine() ?? "";
+        }
+
         /// <summary> Concatenates a string if its length reaches a certain threshold.</summary>
         public static string Concat(string str, int threshold) {
             return str.Length <= threshold

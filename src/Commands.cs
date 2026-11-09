@@ -217,10 +217,15 @@ namespace Prj.src {
 
             // project
             if (ids.Count == 1) {
-                if (ProjectStorage.Projects.Remove(ids[0]))
-                    Msg.Info($"project {ids[0]} was successfully removed.");
-                else
+                if (ProjectStorage.Projects.TryGetValue(ids[0], out _)) {
+                    string input = Util.UserInput($"Do you really want to remove project {ids[0]}? (y/n)");
+                    if (input.ToLower().Contains('y')) {
+                        if (ProjectStorage.Projects.Remove(ids[0]))
+                            Msg.Info($"project {ids[0]} was successfully removed.");
+                    }
+                } else {
                     Msg.Info($"project {ids[0]} could not be found.");
+                }
                 return;
             }
 
