@@ -89,14 +89,14 @@ namespace Prj.src {
                 }
 
             } else {
-                Msg.Error($"project id '{id}' does not exist");
+                Msg.Error($"project id {id} does not exist.");
             }
         }
 
         private static void CmdNew(List<string>? _) {
             int? newId = ProjectStorage.FindVacantIdProject();
             if (newId == null) {
-                Msg.Error("project limit has been reached");
+                Msg.Error("project limit has been reached.");
                 return;
             }
 
@@ -123,7 +123,7 @@ namespace Prj.src {
                 descr = descr.Trim();
             if (title != null && newId is int id) {
                 ProjectStorage.AddNewProject(title, descr, id);
-                Msg.Info($"new project with id '{id}' was created successfully.");
+                Msg.Info($"new project with id {id} was created successfully.");
             }
         }
 
@@ -131,7 +131,7 @@ namespace Prj.src {
             if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
                 int? newId = ProjectStorage.FindVacantIdTaskLog(project);
                 if (newId == null) {
-                    Msg.Error($"task/log limit for project '{ids[0]}'has been reached");
+                    Msg.Error($"task/log limit for project {ids[0]} has been reached.");
                     return;
                 }
 
@@ -140,10 +140,10 @@ namespace Prj.src {
                 if (edOutput is string userContent && newId is int id) {
                     if (isTask) {
                         project.Tasks.Add(new ProjectStorage.Item(userContent.Split('\n').First(), id));
-                        Msg.Info($"new task '{id}' in project '{ids[0]}' was created successfully.");
+                        Msg.Info($"new task {id} in project {ids[0]} was created successfully.");
                     } else {
                         project.Logs.Add(new ProjectStorage.Item(userContent.Trim(), id));
-                        Msg.Info($"new log '{id}' in project '{ids[0]}' was created successfully.");
+                        Msg.Info($"new log {id} in project {ids[0]} was created successfully.");
                     }
                     project.LastChanged = DateTime.Now;
                 } else if (edOutput == null || text == null) {
@@ -153,7 +153,7 @@ namespace Prj.src {
                         Msg.Error("failed to create log due to null editor output.");
                 }
             } else {
-                Msg.Error($"project '{ids[0]}' does not exist");
+                Msg.Error($"project {ids[0]} does not exist.");
             }
 
         }
@@ -177,7 +177,7 @@ namespace Prj.src {
                 return rawIds?.Select(id => Convert.ToInt32(id)).ToList();
             }
             catch {
-                Msg.Error($"missing or malformed arguments");
+                Msg.Error($"missing or malformed arguments.");
                 return null;
             }
         }
@@ -189,7 +189,7 @@ namespace Prj.src {
 
             if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
                 if (project.Tasks.Count == 0) {
-                    Msg.Error($"project {ids[0]} has no tasks");
+                    Msg.Error($"project {ids[0]} has no tasks.");
                     return;
                 }
 
@@ -197,16 +197,16 @@ namespace Prj.src {
                     if (task.Id == ids[1]) {
                         task.Done = !task.Done;
                         if (task.Done == true)
-                            Msg.Info($"task '{task.Id}' in project '{ids[0]}' is done!");
+                            Msg.Info($"task {task.Id} in project {ids[0]} is done!");
                         else
-                            Msg.Info($"task '{task.Id}' in project '{ids[0]}' needs more work!");
+                            Msg.Info($"task {task.Id} in project {ids[0]} needs more work!");
                         project.LastChanged = DateTime.Now;
                         return;
                     }
                 }
-                Msg.Error($"task '{ids[1]}' does not exist");
+                Msg.Error($"task {ids[1]} does not exist.");
             } else {
-                Msg.Error($"project '{ids[0]}' does not exist");
+                Msg.Error($"project {ids[0]} does not exist.");
             }
         }
 
@@ -218,9 +218,9 @@ namespace Prj.src {
             // project
             if (ids.Count == 1) {
                 if (ProjectStorage.Projects.Remove(ids[0]))
-                    Msg.Info($"project '{ids[0]}' was successfully removed.");
+                    Msg.Info($"project {ids[0]} was successfully removed.");
                 else
-                    Msg.Info($"project '{ids[0]}' could not be found.");
+                    Msg.Info($"project {ids[0]} could not be found.");
                 return;
             }
 
@@ -229,17 +229,17 @@ namespace Prj.src {
                 if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
                     if (project.Logs.RemoveAll(t => t.Id == ids[1]) > 0) {
                         project.LastChanged = DateTime.Now;
-                        Msg.Info($"log '{ids[1]}' was successfully removed from project '{ids[0]}'.");
+                        Msg.Info($"log {ids[1]} was successfully removed from project {ids[0]}.");
                         return;
                     } else if (project.Tasks.RemoveAll(t => t.Id == ids[1]) > 0) {
                         project.LastChanged = DateTime.Now;
-                        Msg.Info($"task '{ids[1]}' was successfully removed from project '{ids[0]}'.");
+                        Msg.Info($"task {ids[1]} was successfully removed from project {ids[0]}.");
                         return;
                     } else {
-                        Msg.Info($"a task or log with id '{ids[0]}' could not be found.");
+                        Msg.Info($"a task or log with id {ids[0]} could not be found.");
                     }
                 } else {
-                    Msg.Info($"project '{ids[0]}' could not be found.");
+                    Msg.Info($"project {ids[0]} could not be found.");
                 }
 
             }
@@ -268,7 +268,7 @@ namespace Prj.src {
                             }
                         }
                     } else if (edOutput == null || title == null) {
-                        Msg.Error("failed to create project due to null editor output");
+                        Msg.Error("failed to create project due to null editor output.");
                     }
 
                     // Console.WriteLine($"new id: {newId}");
@@ -277,13 +277,13 @@ namespace Prj.src {
                     if (title != null) {
                         project.Title = title.Trim();
                     } else {
-                        Msg.Info($"no new title was given - edit was cancelled");
+                        Msg.Info($"no title was provided - edit was cancelled.");
                     }
                     project.LastChanged = DateTime.Now;
-                    Msg.Info($"project '{ids[0]}' was edited successfully");
+                    Msg.Info($"project {ids[0]} was edited successfully.");
 
                 } else {
-                    Msg.Info($"project '{ids[0]}' could not be found");
+                    Msg.Info($"project {ids[0]} could not be found.");
                 }
                 return;
             }
@@ -297,10 +297,10 @@ namespace Prj.src {
                         if (edOutput is string userContent) {
                             project.Tasks[listIndex].Text = userContent.Split('\n').First();
                             project.LastChanged = DateTime.Now;
-                            Msg.Info($"task '{ids[1]}' in project '{ids[0]}' was edited successfully");
+                            Msg.Info($"task {ids[1]} in project {ids[0]} was edited successfully.");
                             return;
                         } else if (edOutput == null) {
-                            Msg.Error("failed to edit task due to null editor output");
+                            Msg.Error("failed to edit task due to null editor output.");
                             return;
                         }
                     } else if ((listIndex = project.Logs.FindIndex(t => t.Id == ids[1])) >= 0) {
@@ -308,17 +308,17 @@ namespace Prj.src {
                         if (edOutput is string userContent) {
                             project.Logs[listIndex].Text = userContent.Trim();
                             project.LastChanged = DateTime.Now;
-                            Msg.Info($"log '{ids[1]}' in project '{ids[0]}' was edited successfully");
+                            Msg.Info($"log {ids[1]} in project {ids[0]} was edited successfully.");
                             return;
                         } else if (edOutput == null) {
-                            Msg.Error("failed to edit task due to null editor output");
+                            Msg.Error("failed to edit task due to null editor output.");
                             return;
                         }
 
                     }
 
                 } else {
-                    Msg.Info($"project '{ids[0]}' could not be found.");
+                    Msg.Info($"project {ids[0]} could not be found.");
                 }
 
             }
