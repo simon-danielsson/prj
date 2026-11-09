@@ -9,9 +9,14 @@ namespace Prj.src {
     /// Handling and execution of program commands (hit after Program.cs)
     /// </summary>
     static class Commands {
-        private static void CmdList(string? idRaw) {
-            if (idRaw is string id) {
-                CmdListProject(idRaw);
+
+        private static void CmdList(List<string>? rawIds) {
+            List<int>? ids = ParseArgsToInt(rawIds);
+            if (ids == null)
+                return;
+
+            if (ids.Count == 1 && ids[0] is int id) {
+                CmdListProject(id);
                 return;
             }
 
@@ -36,14 +41,7 @@ namespace Prj.src {
             }
         }
 
-        private static void CmdListProject(string? idRaw) {
-            int id = -1;
-            if (idRaw != null)
-                id = CmdArgParse(idRaw)[0];
-            else {
-                Msg.Error("no argument provided");
-                return;
-            }
+        private static void CmdListProject(int id) {
 
             if (id >= 0 && ProjectStorage.Projects.TryGetValue(id, out var row)) {
 
@@ -91,7 +89,7 @@ namespace Prj.src {
             }
         }
 
-        private static void CmdNew(string? _) {
+        private static void CmdNew(List<string>? _) {
             int? newId = ProjectStorage.FindVacantIdProject();
             if (newId == null) {
                 Msg.Error("project limit has been reached");
@@ -125,14 +123,7 @@ namespace Prj.src {
             }
         }
 
-        private static void CmdTaskLogBackend(string? idRaw, bool isTask) {
-            int[] ids = [];
-            if (idRaw != null)
-                ids = CmdArgParse(idRaw);
-            else {
-                Msg.Error("no argument provided");
-                return;
-            }
+        private static void CmdTaskLogBackend(List<int> ids, bool isTask) {
             if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
                 int? newId = ProjectStorage.FindVacantIdTaskLog(project);
                 if (newId == null) {
@@ -163,22 +154,29 @@ namespace Prj.src {
 
         }
 
-        private static void CmdTask(string? idRaw) {
-            CmdTaskLogBackend(idRaw, true);
-        }
-
-        private static void CmdLog(string? idRaw) {
-            CmdTaskLogBackend(idRaw, false);
-        }
-
-        private static void CmdFlip(string? idRaw) {
-            int[] ids = [];
-            if (idRaw != null)
-                ids = CmdArgParse(idRaw);
-            else {
-                Msg.Error("no argument provided");
+        private static void CmdTask(List<string>? rawIds) {
+            List<int>? ids = ParseArgsToInt(rawIds);
+            if (ids == null)
                 return;
-            }
+            CmdTaskLogBackend(ids, true);
+        }
+
+        private static void CmdLog(List<string>? rawIds) {
+            List<int>? ids = ParseArgsToInt(rawIds);
+            if (ids == null)
+                return;
+            CmdTaskLogBackend(ids, false);
+        }
+
+        private static List<int>? ParseArgsToInt(List<string>? rawIds) {
+            return rawIds?.Select(id => Convert.ToInt32(id)).ToList();
+        }
+
+        private static void CmdFlip(List<string>? rawIds) {
+            List<int>? ids = ParseArgsToInt(rawIds);
+            if (ids == null)
+                return;
+
             if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
                 if (project.Tasks.Count == 0) {
                     Msg.Error($"project {ids[0]} has no tasks");
@@ -202,17 +200,13 @@ namespace Prj.src {
             }
         }
 
-        private static void CmdRemove(string? idRaw) {
-            int[] ids = [];
-            if (idRaw != null)
-                ids = CmdArgParse(idRaw);
-            else {
-                Msg.Error("no argument provided");
+        private static void CmdRemove(List<string>? rawIds) {
+            List<int>? ids = ParseArgsToInt(rawIds);
+            if (ids == null)
                 return;
-            }
 
             // project
-            if (ids.Length == 1) {
+            if (ids.Count == 1) {
                 if (ProjectStorage.Projects.Remove(ids[0]))
                     Msg.Info($"project '{ids[0]}' was successfully removed.");
                 else
@@ -221,7 +215,7 @@ namespace Prj.src {
             }
 
             // task/log in project
-            if (ids.Length == 2) {
+            if (ids.Count == 2) {
                 if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
                     if (project.Logs.RemoveAll(t => t.Id == ids[1]) > 0) {
                         project.LastChanged = DateTime.Now;
@@ -241,17 +235,13 @@ namespace Prj.src {
             }
         }
 
-        private static void CmdEdit(string? idRaw) {
-            int[] ids = [];
-            if (idRaw != null)
-                ids = CmdArgParse(idRaw);
-            else {
-                Msg.Error("no argument provided");
+        private static void CmdEdit(List<string>? rawIds) {
+            List<int>? ids = ParseArgsToInt(rawIds);
+            if (ids == null)
                 return;
-            }
 
             // project
-            if (ids.Length == 1) {
+            if (ids.Count == 1) {
                 if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
                     string oldContent = project.Title + "\n\n" + project.Descr;
                     string? title = null, descr = null;
@@ -289,7 +279,7 @@ namespace Prj.src {
             }
 
             // task/log in project
-            if (ids.Length == 2) {
+            if (ids.Count == 2) {
                 if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
                     int listIndex;
                     if ((listIndex = project.Tasks.FindIndex(t => t.Id == ids[1])) >= 0) {
@@ -325,34 +315,20 @@ namespace Prj.src {
 
         }
 
-        private static void CmdHelp(string? _) {
+        private static void CmdHelp(List<string>? _) {
             string helpTxt = Util.GetEmbeddedContent("help.txt");
             Console.Write($"{helpTxt}");
 
             foreach (KeyValuePair<string, CmdTableRow> row in CmdTable) {
                 Console.Write(
                     string.Format("{0,-8}", row.Key));
-                Console.Write(
-                    string.Format("{0,-8}", row.Value.Arg));
+                Console.Write(string.Format("{0,-8}", string.Join(" ", row.Value.Arg)));
                 Console.WriteLine(
-                    string.Format("{1,0}", row.Key, row.Value.Descr));
+                    string.Format("{1,0}", row.Key, row.Value.Description));
             }
         }
 
-        public record CmdTableRow(string Descr, string? Arg, Action<string?> Function);
-
-        /// <summary>parse unknown arg string? like '1' and '2-3' into [1] and [2,3]</summary>
-        static public int[] CmdArgParse(string? rawArg) {
-            if (rawArg is string arg) {
-                if (arg.Contains('-')) {
-                    return [.. arg.Split('-').Select(int.Parse)];
-                } else {
-                    return [Convert.ToInt32(arg)];
-                }
-            } else {
-                return [];
-            }
-        }
+        public record CmdTableRow(string Description, List<string> Arg, Action<List<string>?> Command);
 
         /// <summary>
         /// Dict. containing program commands with respective names,
@@ -360,28 +336,28 @@ namespace Prj.src {
         /// </summary>
         static public Dictionary<string, CmdTableRow> CmdTable = new(){
                 {
-                    "help", new("Display information and available commands.", null, CmdHelp)
+                    "help", new("Display information and available commands.", [""], CmdHelp)
                 },
                 {
-                    "new", new("Create a new project.", null, CmdNew)
+                    "new", new("Create a new project.", [""], CmdNew)
                 },
                 {
-                    "ls", new("List all projects or display a project overview using an id.", "[id]", CmdList)
+                    "ls", new("List all projects or display a project overview using an id.", ["[id]"], CmdList)
                 },
                 {
-                    "task", new("Create new task in a project -- ex. (new task in project 2): prj task 2", "<id>", CmdTask)
+                    "task", new("Create new task in a project -- ex. (new task in project 2): prj task 2", ["<id>"], CmdTask)
                 },
                 {
-                    "log", new("Write a new log in a project -- ex. (new log in project 8): prj log 8", "<id>", CmdLog)
+                    "log", new("Write a new log in a project -- ex. (new log in project 8): prj log 8", ["<id>"], CmdLog)
                 },
                 {
-                    "flip", new("Flip task state -- ex. (task 5 in project 12): prj flip 12-5", "<id>", CmdFlip)
+                    "flip", new("Flip task state -- ex. (task 5 in project 12): prj flip 12-5", ["<id>"], CmdFlip)
                 },
                 {
-                    "edit", new("Edit a project, log or task -- ex. (task/log 1 in project 3): prj edit 3-1", "<id>", CmdEdit)
+                    "edit", new("Edit a project, log or task -- ex. (task/log 1 in project 3): prj edit 3-1", ["<id>"], CmdEdit)
                 },
                 {
-                    "rm", new("Remove an item -- ex. (remove task 2 in project 1): prj rm 1-2", "<id>", CmdRemove)
+                    "rm", new("Remove an item -- ex. (remove task 2 in project 1): prj rm 1-2", ["<id>"], CmdRemove)
                 },
             };
 

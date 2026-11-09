@@ -13,58 +13,28 @@
             if (!ProjectStorage.LoadFromFile())
                 return;
 
-            var a = new Args();
+            Args args = new();
 
-            if (!a.ArgLeft()) {
+            if (args.AreNone) {
                 Msg.Error($"no command was provided - use command 'help' if you're feeling lost.");
                 return;
             }
 
-            while (a.ArgLeft()) {
-                if (a.Current() is string arg) {
+            while (args.AreArgsLeft) {
+                if (args.Current is string arg) {
                     if (Commands.CmdTable.TryGetValue(arg, out var row)) {
-                        if (a.Next() is string functionArg) {
-                            row.Function(functionArg);
-                            break;
-                        } else {
-                            row.Function(null);
-                            break;
-                        }
+                        row.Command(args.Remaining);
+                        break;
                     } else {
                         Msg.Error($"illegal command '{arg}' - use command 'help' if you're feeling lost.");
                         break;
                     }
                 }
-                a.Next();
+                args.IncrementNext();
             }
 
             ProjectStorage.SaveToFile();
         }
 
-        class Args {
-            readonly static string[] args = Environment.GetCommandLineArgs();
-            readonly int argsLen = args.Length;
-            private int cursor = 1;
-
-            public bool ArgLeft() {
-                return cursor + 1 <= argsLen;
-            }
-
-            public bool HasNext() {
-                return cursor + 1 < argsLen;
-            }
-
-            public string? Current() {
-                return args[cursor];
-            }
-
-            public string? Next() {
-                return HasNext() ? args[cursor += 1] : null;
-            }
-
-            public string? PeekNext() {
-                return HasNext() ? args[cursor + 1] : null;
-            }
-        }
     }
 }
