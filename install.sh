@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if ! dotnet --info 1>/dev/null ; then
+    echo "Error: dotnet is not installed - install it before continuing (see README.md)."
+    exit
+fi
+
 if [ ! -d "$HOME/.local/bin" ]; then
     mkdir -p $HOME/.local/bin && \
         printf "Info: a new folder '\$HOME/.local/bin' was created.\n" \
