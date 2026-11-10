@@ -2,6 +2,11 @@
 
 set -xe
 
+mkdir -p $HOME/.local/bin
+
+# put this in your .bashrc permanently if you have not already
+export PATH="$HOME/.local/bin:$PATH"
+
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         dotnet publish -c Release -r linux-x64 --self-contained true \
             -p:PublishSingleFile=true -o out/linux-x64
