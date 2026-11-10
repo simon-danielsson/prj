@@ -156,6 +156,10 @@ namespace Prj.src {
             List<int>? ids = ParseArgsToInt(rawIds);
             if (ids == null)
                 return;
+            else if (ids.Count == 1) {
+                Msg.Error($"a project cannot be flipped!");
+                return;
+            }
 
             if (ProjectStorage.Projects.TryGetValue(ids[0], out var project)) {
                 if (project.Tasks.Count == 0) {
