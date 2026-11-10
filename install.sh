@@ -3,7 +3,7 @@
 if [ ! -d "$HOME/.local/bin" ]; then
     mkdir -p $HOME/.local/bin && \
         printf "Info: a new folder '\$HOME/.local/bin' was created.\n" \
-        printf "Be sure to add it to your bin path (see README).\n"
+        printf "Be sure to add it to your bin path (see README.md).\n"
 fi
 
 # put this in your .bashrc permanently if you have not already
@@ -11,7 +11,7 @@ export PATH="$HOME/.local/bin:$PATH"
 
 if [[ -z "${EDITOR}" ]]; then
     echo "Info: environment variable \$EDITOR has not yet been set."
-    echo "See the README.md if you're unsure of what to do."
+    echo "Add this variable to your environment (see README.md)."
 fi
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
