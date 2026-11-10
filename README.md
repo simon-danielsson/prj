@@ -29,7 +29,7 @@ as well as a list of freeform logs. This application was built for the explicit
 purpose of learning/exploring the C# programming language.
   
 ### Requirements
-- .NET
+- .NET 10
 - Unix OS
 - A terminal-based text editor
   
@@ -38,7 +38,27 @@ purpose of learning/exploring the C# programming language.
 
 ## Install
   
-Clone this repo and run the [provided install script](install.sh).
+#### 1. Set environment variables (if not set already)
+``` bash
+# in ~/.bashrc (or whichever shell you're using):
+
+export PATH="$HOME/.local/bin:$PATH"
+export EDITOR="(your editor)"
+
+# Remember restart your terminal session afterwards
+```
+
+#### 2. [Install .NET 10](https://learn.microsoft.com/en-us/dotnet/core/install/) (if not installed)
+
+#### 3. Clone this repo and run the provided [install script](install.sh).
+``` bash
+git clone --depth=1 https://github.com/simon-danielsson/prj.git
+cd prj
+chmod +x install.sh
+./install.sh
+```
+
+#### 4. Done
   
 ---
 <div id="usage"></div>
