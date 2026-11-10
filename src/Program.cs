@@ -5,8 +5,8 @@
     static class Program {
 
         static void Main() {
-            if (Console.WindowWidth < 100) {
-                Msg.Error("a minimum terminal width of 100 is required to run this program");
+            if (Console.WindowWidth < 80) {
+                Msg.Error("a minimum terminal width of 80 is required to run this program");
                 return;
             }
 

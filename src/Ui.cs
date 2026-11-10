@@ -20,56 +20,90 @@ namespace Prj.src {
     }
 
     class Draw {
-        private readonly int termWidth = Console.WindowWidth;
+        private static readonly int termWidth = Console.WindowWidth;
+
+        private static readonly int wOverviewId = 4;
+        private static readonly int wOverviewCompl = termWidth / 8;
+        private static readonly int wOverviewChanged = 20;
+        private static readonly int wOverviewCreated = 20;
 
         public static void OverviewHeader() {
-            Console.WriteLine(Color.Ansi("underline") +
-                    string.Format("{0,-4}{1, -34}{2,-16}{3, -21}{4,-18}", "ID", "Title", "Completion", "Last changed", "Created") + Color.Ansi("reset"));
+            int wOverviewTitle = Math.Max(termWidth - 1 - (wOverviewId + wOverviewCompl + wOverviewChanged + wOverviewCreated), "Title".Length + 1);
+
+            string row =
+                  "ID".PadRight(wOverviewId)
+                + "Title".PadRight(wOverviewTitle)
+                + "Completion".PadRight(wOverviewCompl)
+                + "Last changed".PadRight(wOverviewChanged)
+                + "Created".PadRight(wOverviewCreated);
+
+            Console.Write(Color.Ansi("underline"));
+            Console.WriteLine(row);
+            Console.Write(Color.Ansi("reset"));
         }
 
         public static void OverviewProject(KeyValuePair<int, ProjectStorage.Project> p) {
-            Console.WriteLine(string.Format("{0,-4}{1,-34}{2, -16}{3,-21}{4,-4}",
-                p.Key,
-                Util.Concat(p.Value.Title, 30),
-                $"{p.Value.TasksDone()}/{p.Value.TasksTotal()} - {p.Value.CompletionPercent():F0}%",
-                Util.TimeDisplay(p.Value.LastChanged),
-                Util.TimeDisplay(p.Value.DateCreated())
-                ));
+
+            string text = Util.Concat(p.Value.Title, termWidth - 5 - (wOverviewId + wOverviewCompl + wOverviewChanged + wOverviewCreated));
+
+            int wOverviewTitle = Math.Max(termWidth - 1 - (wOverviewId + wOverviewCompl + wOverviewChanged + wOverviewCreated), text.Length + 1);
+
+            string row =
+                  $"{p.Key}".PadRight(wOverviewId)
+                + text.PadRight(wOverviewTitle)
+                + $"{p.Value.TasksDone()}/{p.Value.TasksTotal()} - {p.Value.CompletionPercent():F0}%".PadRight(wOverviewCompl)
+                + Util.TimeDisplay(p.Value.LastChanged).PadRight(wOverviewChanged)
+                + Util.TimeDisplay(p.Value.DateCreated()).PadRight(wOverviewCreated);
+            Console.WriteLine(row);
         }
 
         public static void LogHeader() {
-            Console.WriteLine(Color.Ansi("underline") +
-                    string.Format("{0,-93}", "Logs") + Color.Ansi("reset"));
+            Console.Write(Color.Ansi("underline"));
+            Console.WriteLine("Logs".PadRight(termWidth));
+            Console.Write(Color.Ansi("reset"));
         }
 
         public static void TaskHeader() {
-            Console.WriteLine(Color.Ansi("underline") +
-        string.Format("{0,-93}", "Tasks") + Color.Ansi("reset"));
+            Console.Write(Color.Ansi("underline"));
+            Console.WriteLine("Tasks".PadRight(termWidth));
+            Console.Write(Color.Ansi("reset"));
         }
 
         public static void Log(ProjectStorage.Item item) {
             Console.Write(Color.Ansi("bold"));
-            string line = new('-', 71);
-            Console.Write(
-                string.Format("{0,-3}{1,0}{2,4}", item.Id, line, " " + Util.TimeDisplay(item.Created)));
+
+            int wId = 3;
+            string created = Util.TimeDisplay(item.Created);
+            int wLine = Math.Max(termWidth - 1 - (wOverviewCreated + wId - 1), 1);
+
+            string line = new('-', wLine);
+
+            string row = $"{item.Id}".PadRight(wId) + line.PadRight(wLine) + created.PadLeft(wOverviewCreated - 1);
+
+            Console.WriteLine(row);
             Console.Write(Color.Ansi("reset"));
-            Console.WriteLine("\n" +
+
+            Console.WriteLine(
                 string.Format(item.Text));
         }
 
         public static void Task(ProjectStorage.Item item) {
-            Console.Write(
-                string.Format("{0,-3}{1,-2}", item.Id, "│"));
-            if (item.Done)
-                Console.Write(Color.Ansi("crossed"));
-            Console.Write(string.Format("{0,-69}", Util.Concat(item.Text, 65)));
+            int wId = 3;
+            int wIdDiv = 2;
+            string created = Util.TimeDisplay(item.Created);
+            string text = Util.Concat(item.Text, termWidth - 5 - (wOverviewCreated - 1 + wId + wIdDiv));
+            int wText = Math.Max(termWidth - 1 - (wOverviewCreated - 1 + wId + wIdDiv), text.Length + 1);
+
+            string row = $"{item.Id}".PadRight(wId) + "│".PadRight(wIdDiv) + (item.Done ? Color.Ansi("crossed") : "") + text.PadRight(wText) + Color.Ansi("reset") + created.PadLeft(wOverviewCreated - 1);
+
+            Console.WriteLine(row);
             Console.Write(Color.Ansi("reset"));
-            Console.WriteLine(" " + Util.TimeDisplay(item.Created));
         }
 
         public static void ProjectHeader(ProjectStorage.Project project, int projectId) {
-            Console.WriteLine(Color.Ansi("inverted") +
-                    string.Format("{0,-93}", $"{projectId}: " + project.Title) + Color.Ansi("reset"));
+            Console.Write(Color.Ansi("inverted"));
+            Console.WriteLine($"{projectId}: {project.Title}".PadRight(termWidth));
+            Console.Write(Color.Ansi("reset"));
             if (project.Descr != null && project.Descr.Length > 0)
                 Console.WriteLine(project.Descr);
             Console.WriteLine();
